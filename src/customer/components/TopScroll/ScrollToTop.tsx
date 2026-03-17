@@ -240,184 +240,220 @@
 
 
 
-
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-/** Loader Component */
-interface SelfysnapLoaderProps {
+/** Loader */
+interface Props {
   duration?: number;
   onComplete?: () => void;
-  centerLogo?: string; // Logo inside camera shutter
-  brandLogo?: string;  // Brand logo below
+  centerLogo?: string;
+  brandLogo?: string;
 }
 
-const SelfysnapLoader: React.FC<SelfysnapLoaderProps> = ({
+const SelfysnapLoader: React.FC<Props> = ({
   duration = 2000,
   onComplete,
   centerLogo,
   brandLogo,
 }) => {
   const [progress, setProgress] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (progress >= 100) {
-      setIsLoading(false);
-      onComplete?.();
-      return;
-    }
+    const step = 20;
+    const total = duration / step;
+    const inc = 100 / total;
 
-    const stepTime = 30;
-    const totalSteps = duration / stepTime;
-    const increment = 100 / totalSteps;
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          onComplete?.();
+          return 100;
+        }
+        return prev + inc;
+      });
+    }, step);
 
-    const interval = setInterval(() => {
-      setProgress((prev) => (prev + increment >= 100 ? 100 : prev + increment));
-    }, stepTime);
-
-    return () => clearInterval(interval);
-  }, [progress, duration, onComplete]);
-
-  if (!isLoading) return null;
+    return () => clearInterval(timer);
+  }, [duration, onComplete]);
 
   return (
-    <div className="selfysnap-loader">
+    <div className="loader">
+      <div className="bg-glow"></div>
+
+      {/* CAMERA */}
       <div className="camera">
         <div className="shutter">
           <div className="aperture">
             {centerLogo ? (
               <img src={centerLogo} alt="logo" />
             ) : (
-              <span style={{ fontSize: "36px" }}>📸</span>
+              <span>📸</span>
             )}
           </div>
         </div>
       </div>
 
+      {/* BRAND */}
       <div className="brand">
-        {brandLogo ? (
-          <img src={brandLogo} alt="Brand" style={{ height: "80px", objectFit: "contain" }} />
-        ) : (
-          "SELFYSNAP"
-        )}
+        {brandLogo ? <img src={brandLogo} alt="brand" /> : "SELFYSNAP"}
       </div>
 
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${progress}%` }} />
+      {/* SLOGAN */}
+      <div className="slogan">
+        <span>SNAP IT</span>
+        <span>SHOP IT</span>
+        <span>SMILE</span>
       </div>
 
-      <p className="loading-text">Loading marketplace... {Math.round(progress)}%</p>
+      {/* PROGRESS */}
+      <div className="progress">
+        <div className="fill" style={{ width: `${progress}%` }} />
+      </div>
+
+      <p className="text">Loading... {Math.round(progress)}%</p>
 
       <style>{`
-        :root {
-          --bg-color: #0f172a;              
-          --shutter-gradient: conic-gradient(#3b82f6, #06b6d4, #3b82f6);  
-          --progress-gradient: linear-gradient(90deg, #3b82f6, #06b6d4);
-          --text-color: white;
-        }
-
-        .selfysnap-loader{
+        .loader{
           position:fixed;
           top:0;
           left:0;
           width:100%;
           height:100%;
-          background:var(--bg-color);
           display:flex;
           flex-direction:column;
           justify-content:center;
           align-items:center;
+          background:linear-gradient(135deg,#f8fafc,#e2e8f0);
           z-index:9999;
-          color:var(--text-color);
         }
 
+        .bg-glow{
+          position:absolute;
+          width:400px;
+          height:400px;
+          background:radial-gradient(circle, rgba(99,102,241,0.2), transparent);
+          filter:blur(120px);
+          animation:pulse 4s infinite;
+        }
+
+        @keyframes pulse{
+          0%{transform:scale(1);opacity:.5}
+          50%{transform:scale(1.3);opacity:1}
+          100%{transform:scale(1);opacity:.5}
+        }
+
+        /* CAMERA SMALL */
         .camera{
-          width:150px;
-          height:150px;
+          width:220px;
+          height:220px;
           border-radius:50%;
-          background:rgba(255,255,255,0.05);
+          background:rgba(255,255,255,0.6);
+          backdrop-filter:blur(20px);
           display:flex;
-          align-items:center;
           justify-content:center;
+          align-items:center;
+          box-shadow:0 10px 40px rgba(0,0,0,0.15);
           margin-bottom:20px;
         }
 
         .shutter{
-          width:100px;
-          height:100px;
+          width:160px;
+          height:160px;
           border-radius:50%;
-          background:var(--shutter-gradient);
+          background:conic-gradient(#6366f1,#06b6d4,#6366f1);
           display:flex;
-          align-items:center;
           justify-content:center;
+          align-items:center;
           animation:spin 2s linear infinite;
         }
 
         .aperture{
-          width:70px;
-          height:70px;
+          width:110px;
+          height:110px;
           border-radius:50%;
-          background:#000;
+          background:#fff;
           display:flex;
-          align-items:center;
           justify-content:center;
+          align-items:center;
         }
 
         .aperture img{
-          width:60px;
-          height:60px;
+          width:90px;
+          height:90px;
           border-radius:50%;
-        }
-
-        .brand{
-          font-size:28px;
-          font-weight:700;
-          margin-bottom:20px;
-        }
-
-        .progress-bar{
-          width:250px;
-          height:6px;
-          background:rgba(255,255,255,0.2);
-          border-radius:10px;
-          overflow:hidden;
-        }
-
-        .progress-fill{
-          height:100%;
-          background:var(--progress-gradient);
-          transition:width 0.2s;
-        }
-
-        .loading-text{
-          margin-top:15px;
-          font-size:14px;
-          opacity:0.8;
         }
 
         @keyframes spin{
           to{transform:rotate(360deg)}
+        }
+
+        /* BRAND */
+        .brand img{
+          height:90px;
+          margin-bottom:10px;
+        }
+
+        /* SLOGAN ANIMATION */
+        .slogan{
+          display:flex;
+          gap:12px;
+          font-weight:700;
+          color:#334155;
+          margin-bottom:15px;
+        }
+
+        .slogan span{
+          opacity:0;
+          transform:translateY(10px);
+          animation:fadeUp 1s forwards;
+        }
+
+        .slogan span:nth-child(1){animation-delay:0.2s;}
+        .slogan span:nth-child(2){animation-delay:0.5s;}
+        .slogan span:nth-child(3){animation-delay:0.8s;}
+
+        @keyframes fadeUp{
+          to{
+            opacity:1;
+            transform:translateY(0);
+          }
+        }
+
+        /* PROGRESS */
+        .progress{
+          width:320px;
+          height:8px;
+          background:#e2e8f0;
+          border-radius:50px;
+          overflow:hidden;
+        }
+
+        .fill{
+          height:100%;
+          background:linear-gradient(90deg,#6366f1,#06b6d4);
+          transition:0.2s;
+        }
+
+        .text{
+          margin-top:10px;
+          font-size:14px;
+          color:#475569;
         }
       `}</style>
     </div>
   );
 };
 
-/** ScrollToTop Component */
-interface ScrollToTopProps {
-  duration?: number;
-  centerLogo?: string;
-  brandLogo?: string;
-}
-
-const ScrollToTop: React.FC<ScrollToTopProps> = ({
+/** ScrollToTop */
+const ScrollToTop: React.FC<Props> = ({
   duration = 2000,
   centerLogo,
   brandLogo,
 }) => {
   const { pathname } = useLocation();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
@@ -427,18 +463,16 @@ const ScrollToTop: React.FC<ScrollToTopProps> = ({
     return () => clearTimeout(timer);
   }, [pathname, duration]);
 
-  if (loading) {
-    return (
-      <SelfysnapLoader
-        duration={duration}
-        centerLogo={centerLogo}
-        brandLogo={brandLogo}
-        onComplete={() => setLoading(false)}
-      />
-    );
-  }
+  if (!loading) return null;
 
-  return null;
+  return (
+    <SelfysnapLoader
+      duration={duration}
+      centerLogo={centerLogo}
+      brandLogo={brandLogo}
+      onComplete={() => setLoading(false)}
+    />
+  );
 };
 
 export default ScrollToTop;
