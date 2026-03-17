@@ -151,7 +151,7 @@ function App() {
     <ThemeProvider theme={customeTheme}>
       <div className='App'>
         {/* Loader / Scroll to top */}
-        <ScrollToTop centerLogo="/logo34.png" brandLogo="/logo34.png" duration={2000} />
+        <ScrollToTop centerLogo="/logos.png" brandLogo="/logo34.png" duration={2000} />
 
         {/* Custom Right-click Alert */}
         {showAlert && (
