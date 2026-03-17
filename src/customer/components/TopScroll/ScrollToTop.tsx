@@ -238,6 +238,9 @@
 
 
 
+
+
+
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -308,9 +311,8 @@ const SelfysnapLoader: React.FC<SelfysnapLoaderProps> = ({
 
       <style>{`
         :root {
-          /* Change these colors to match your logo */
-          --bg-color: #0f172a;              /* dark background */
-          --shutter-gradient: conic-gradient(#3b82f6, #06b6d4, #3b82f6);  /* blue‑cyan */
+          --bg-color: #0f172a;              
+          --shutter-gradient: conic-gradient(#3b82f6, #06b6d4, #3b82f6);  
           --progress-gradient: linear-gradient(90deg, #3b82f6, #06b6d4);
           --text-color: white;
         }
@@ -403,7 +405,17 @@ const SelfysnapLoader: React.FC<SelfysnapLoaderProps> = ({
 };
 
 /** ScrollToTop Component */
-const ScrollToTop: React.FC<{ duration?: number }> = ({ duration = 2000 }) => {
+interface ScrollToTopProps {
+  duration?: number;
+  centerLogo?: string;
+  brandLogo?: string;
+}
+
+const ScrollToTop: React.FC<ScrollToTopProps> = ({
+  duration = 2000,
+  centerLogo,
+  brandLogo,
+}) => {
   const { pathname } = useLocation();
   const [loading, setLoading] = useState(false);
 
@@ -419,8 +431,8 @@ const ScrollToTop: React.FC<{ duration?: number }> = ({ duration = 2000 }) => {
     return (
       <SelfysnapLoader
         duration={duration}
-        centerLogo="/logo34.png"
-        brandLogo="/logo34.png"
+        centerLogo={centerLogo}
+        brandLogo={brandLogo}
         onComplete={() => setLoading(false)}
       />
     );
