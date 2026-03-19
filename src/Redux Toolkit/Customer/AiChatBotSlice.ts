@@ -148,7 +148,6 @@
 
 
 
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../../Config/Api";
 
@@ -174,6 +173,9 @@ const initialState: AiChatBotState = {
       message: `
 👋 Welcome to SelfySnap AI Assistant
 
+📧 Email: selfysnap@gmail.com  
+📞 Contact: 99920 88843  
+
 Type "Hi" to start
 
 🙏 Thank You
@@ -198,6 +200,18 @@ export const askProductQuestion = createAsyncThunk<
     } catch (error) {
       return rejectWithValue("API Failed");
     }
+  },
+  {
+    condition: ({ question }) => {
+      const msg = question.toLowerCase().trim();
+
+      // ❌ Skip API for basic commands
+      if (["hi", "hii", "hello", "1", "2"].includes(msg)) {
+        return false;
+      }
+
+      return true;
+    },
   }
 );
 
@@ -208,19 +222,19 @@ const aiChatBotSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // 🟢 USER MESSAGE
+      // 🟢 USER INPUT
       .addCase(askProductQuestion.pending, (state, action) => {
         state.loading = true;
 
-        const userMsg = action.meta.arg.question.toLowerCase();
+        const userMsg = action.meta.arg.question.toLowerCase().trim();
 
         state.messages.push({
           role: "user",
           message: action.meta.arg.question,
         });
 
-        // 👉 HI / HELLO → LANGUAGE SELECT
-        if (userMsg === "hi" || userMsg === "hii" || userMsg === "hello") {
+        // 👉 HI
+        if (["hi", "hii", "hello"].includes(userMsg)) {
           state.messages.push({
             role: "assistant",
             message: `
@@ -230,13 +244,16 @@ const aiChatBotSlice = createSlice({
 2️⃣ English  
 
 👉 Reply with 1 or 2
+
+📧 selfysnap@gmail.com  
+📞 99920 88843
             `,
           });
 
           state.loading = false;
         }
 
-        // 👉 LANGUAGE SELECT
+        // 👉 HINDI
         else if (userMsg === "1") {
           state.language = "hindi";
 
@@ -245,22 +262,25 @@ const aiChatBotSlice = createSlice({
             message: `
 🙏 आपने हिंदी चुनी है
 
-मैं आपकी मदद कर सकता हूँ:
-
 🛒 Product खरीदना  
 🛍️ Seller बनना  
 📦 Order track करना  
 💳 Payment करना  
 
-👉 पूछें:
-Seller kaise bane?
+📧 Email: selfysnap@gmail.com  
+📞 Contact: 99920 88843  
+
+👉 पूछें: Seller kaise bane?
 
 🙏 धन्यवाद
             `,
           });
 
           state.loading = false;
-        } else if (userMsg === "2") {
+        }
+
+        // 👉 ENGLISH
+        else if (userMsg === "2") {
           state.language = "english";
 
           state.messages.push({
@@ -268,15 +288,15 @@ Seller kaise bane?
             message: `
 🙏 You selected English
 
-I can help you with:
-
 🛒 Buying products  
 🛍️ Becoming seller  
 📦 Tracking orders  
 💳 Payment  
 
-👉 Try:
-How to buy product?
+📧 Email: selfysnap@gmail.com  
+📞 Contact: 99920 88843  
+
+👉 Try: How to buy product?
 
 🙏 Thank You
             `,
@@ -294,11 +314,11 @@ How to buy product?
 
         if (state.language === "hindi") {
           if (!reply.includes("धन्यवाद")) {
-            reply += "\n\n🙏 धन्यवाद";
+            reply += "\n\n📧 selfysnap@gmail.com\n📞 99920 88843\n🙏 धन्यवाद";
           }
         } else {
           if (!reply.toLowerCase().includes("thank")) {
-            reply += "\n\n🙏 Thank You";
+            reply += "\n\n📧 selfysnap@gmail.com\n📞 99920 88843\n🙏 Thank You";
           }
         }
 
@@ -317,88 +337,97 @@ How to buy product?
 
         let reply = "";
 
-        // 🟢 SELLER
         if (question.includes("seller")) {
           reply = hindi
             ? `
 🛍️ Seller बनने के लिए:
 
-1. Become Seller पर क्लिक करें  
-2. Register करें  
-3. Dashboard में जाएं  
-4. Product add करें  
-5. Order manage करें  
+1. Register करें  
+2. Dashboard खोलें  
+3. Product add करें  
+4. Orders manage करें  
 
-💰 आप earning शुरू कर सकते हैं  
+📧 selfysnap@gmail.com  
+📞 99920 88843  
+
+💰 Start earning  
 
 🙏 धन्यवाद
             `
             : `
 🛍️ To become a Seller:
 
-1. Click Become Seller  
-2. Register  
-3. Open dashboard  
-4. Add products  
-5. Manage orders  
+1. Register  
+2. Open dashboard  
+3. Add products  
+4. Manage orders  
+
+📧 selfysnap@gmail.com  
+📞 99920 88843  
 
 💰 Start earning  
 
 🙏 Thank You
             `;
-        }
-
-        // 🟢 BUY
+        } 
+        
         else if (question.includes("buy") || question.includes("खरीद")) {
           reply = hindi
             ? `
 🛒 Product खरीदने के लिए:
 
-1. Product search करें  
-2. Add to Cart करें  
+1. Search करें  
+2. Add to cart  
 3. Checkout करें  
 4. Payment करें  
 
-📦 Order place हो जाएगा  
+📧 selfysnap@gmail.com  
+📞 99920 88843  
+
+📦 Order placed  
 
 🙏 धन्यवाद
             `
             : `
 🛒 To buy product:
 
-1. Search product  
-2. Add to Cart  
+1. Search  
+2. Add to cart  
 3. Checkout  
-4. Make payment  
+4. Payment  
+
+📧 selfysnap@gmail.com  
+📞 99920 88843  
 
 📦 Order placed  
 
 🙏 Thank You
             `;
-        }
-
-        // 🟢 DEFAULT
+        } 
+        
         else {
           reply = hindi
             ? `
 👋 नमस्ते!
 
-मैं आपकी मदद कर सकता हूँ:
-
 🛒 Product खरीदना  
 🛍️ Seller बनना  
 📦 Order track करना  
+
+📧 selfysnap@gmail.com  
+📞 99920 88843  
 
 🙏 धन्यवाद
             `
             : `
 👋 Hello!
 
-I can help you with:
-
 🛒 Buying products  
 🛍️ Becoming seller  
 📦 Tracking orders  
+
+📧 selfysnap@gmail.com  
+📞 99920 88843  
 
 🙏 Thank You
             `;
