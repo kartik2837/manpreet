@@ -6,3 +6,24 @@
   font-style: normal;
   font-variation-settings: "wdth" 100;
 }
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 🚚 Moving Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
