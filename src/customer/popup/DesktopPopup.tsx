@@ -203,6 +203,7 @@
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -218,6 +219,8 @@
 
 
 
+=======
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
 import React, { useEffect, useState } from "react";
 
 interface DesktopPopupProps {
@@ -238,6 +241,7 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [dontShow, setDontShow] = useState(false);
 
+<<<<<<< HEAD
   // Load saved banner + hide check
   useEffect(() => {
     const saved = localStorage.getItem("bannerUrl");
@@ -245,17 +249,32 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
 
     if (saved) setBannerUrl(saved);
     if (hide === "true") return;
+=======
+  // Load saved banner
+  useEffect(() => {
+    const saved = localStorage.getItem("bannerUrl");
+    if (saved) setBannerUrl(saved);
+  }, []);
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
 
     const timer = setTimeout(() => setVisible(true), delay);
     return () => clearTimeout(timer);
   }, [delay]);
 
+<<<<<<< HEAD
   // Disable scroll
+=======
+  // Disable background scroll
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
   useEffect(() => {
     document.body.style.overflow = visible ? "hidden" : "auto";
   }, [visible]);
 
+<<<<<<< HEAD
   // ESC close
+=======
+  // ESC key close
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") setVisible(false);
@@ -273,11 +292,14 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
   const handleSubmit = () => {
     const num = mobileNumber.replace(/\D/g, "");
 
+<<<<<<< HEAD
     if (num.length !== 10) {
       alert("Enter valid 10 digit mobile");
       return;
     }
 
+=======
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
     if (num === allowedMobile && uploadedFile) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -287,12 +309,16 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
         setShowMobileInput(false);
       };
       reader.readAsDataURL(uploadedFile);
+<<<<<<< HEAD
     } else {
       alert("Not allowed");
+=======
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
     }
 
     setMobileNumber("");
     setUploadedFile(null);
+<<<<<<< HEAD
   };
 
   const handleClose = () => {
@@ -300,15 +326,24 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
       localStorage.setItem("hidePopup", "true");
     }
     setVisible(false);
+=======
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
   };
 
   if (!visible) return null;
 
   return (
+<<<<<<< HEAD
     <div className="overlay" onClick={handleClose}>
       <div className="popup" onClick={(e) => e.stopPropagation()}>
         
         {/* Banner */}
+=======
+    <div className="overlay" onClick={() => setVisible(false)}>
+      <div className="popup" onClick={(e) => e.stopPropagation()}>
+        
+        {/* Image */}
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         <img
           src={bannerUrl}
           alt="banner"
@@ -327,7 +362,11 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
             />
 
             <label className="upload">
+<<<<<<< HEAD
               Upload Banner
+=======
+              Upload
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
               <input type="file" hidden onChange={handleFileSelect} />
             </label>
 
@@ -335,6 +374,7 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           </div>
         )}
 
+<<<<<<< HEAD
         {/* Bottom options */}
         <div className="bottom">
           <label>
@@ -349,6 +389,10 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
 
         {/* Close */}
         <button className="close" onClick={handleClose}>✕</button>
+=======
+        {/* Close */}
+        <button className="close" onClick={() => setVisible(false)}>✕</button>
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
       </div>
 
       <style>{`
@@ -360,7 +404,12 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           justify-content:center;
           align-items:center;
           z-index:9999;
+<<<<<<< HEAD
           backdrop-filter:blur(5px);
+=======
+          padding:12px;
+          backdrop-filter:blur(4px);
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         }
 
         .popup{
@@ -370,7 +419,11 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           border-radius:14px;
           overflow:hidden;
           position:relative;
+<<<<<<< HEAD
           animation:zoomIn .3s ease;
+=======
+          animation:zoomIn .35s ease;
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         }
 
         .banner{
@@ -391,6 +444,10 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           padding:12px;
           border-radius:8px;
           border:1px solid #ccc;
+<<<<<<< HEAD
+=======
+          font-size:14px;
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         }
 
         .upload{
@@ -412,12 +469,15 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           font-weight:600;
         }
 
+<<<<<<< HEAD
         .bottom{
           padding:10px;
           font-size:13px;
           text-align:center;
         }
 
+=======
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         .close{
           position:absolute;
           top:10px;
@@ -432,7 +492,11 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
         }
 
         @keyframes zoomIn{
+<<<<<<< HEAD
           from{opacity:0;transform:scale(.85)}
+=======
+          from{opacity:0;transform:scale(.8)}
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
           to{opacity:1;transform:scale(1)}
         }
 

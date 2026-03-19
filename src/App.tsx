@@ -77,10 +77,6 @@
 
 
 
-
-
-
-
 import './App.css';
 import { ThemeProvider } from '@emotion/react';
 import customeTheme from './Theme/customeTheme';
@@ -100,6 +96,7 @@ import AdminAuth from './admin/pages/Auth/AdminAuth';
 import { fetchUserProfile } from './Redux Toolkit/Customer/UserSlice';
 import { fetchHomePageData } from './Redux Toolkit/Customer/Customer/AsyncThunk';
 import ScrollToTop from './customer/components/TopScroll/ScrollToTop';
+
 
 function App() {
   const dispatch = useAppDispatch();
@@ -185,6 +182,7 @@ function App() {
           <Route path='/verify-seller/:otp' element={<SellerAccountVerification />} />
           <Route path='/seller-account-verified' element={<SellerAccountVerified />} />
           <Route path='/become-seller' element={<BecomeSeller />} />
+          
           <Route path='/admin-login' element={<AdminAuth />} />
           <Route path='*' element={<CustomerRoutes />} />
         </Routes>
@@ -193,4 +191,8 @@ function App() {
   );
 }
 
+<<<<<<< HEAD
 export default App;
+=======
+export default App; 
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)

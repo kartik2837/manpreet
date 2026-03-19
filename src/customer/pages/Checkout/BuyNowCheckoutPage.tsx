@@ -173,7 +173,7 @@ const BuyNowCheckoutPage: React.FC = () => {
                             </div>
                             <div className="flex justify-between items-center">
                                 <span>Shipping</span>
-                                <span>₹ 79</span>
+                                <span>Free</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span>Platform fee</span>

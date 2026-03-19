@@ -238,6 +238,208 @@
 
 
 
+<<<<<<< HEAD
+=======
+// import React, { useEffect, useState } from "react";
+// import { useLocation } from "react-router-dom";
+
+// /** Loader Component */
+// interface SelfysnapLoaderProps {
+//   duration?: number;
+//   onComplete?: () => void;
+//   centerLogo?: string; // Logo inside camera shutter
+//   brandLogo?: string;  // Brand logo below
+// }
+
+// const SelfysnapLoader: React.FC<SelfysnapLoaderProps> = ({
+//   duration = 2000,
+//   onComplete,
+//   centerLogo,
+//   brandLogo,
+// }) => {
+//   const [progress, setProgress] = useState(0);
+//   const [isLoading, setIsLoading] = useState(true);
+
+//   useEffect(() => {
+//     if (progress >= 100) {
+//       setIsLoading(false);
+//       onComplete?.();
+//       return;
+//     }
+
+//     const stepTime = 30;
+//     const totalSteps = duration / stepTime;
+//     const increment = 100 / totalSteps;
+
+//     const interval = setInterval(() => {
+//       setProgress((prev) => (prev + increment >= 100 ? 100 : prev + increment));
+//     }, stepTime);
+
+//     return () => clearInterval(interval);
+//   }, [progress, duration, onComplete]);
+
+//   if (!isLoading) return null;
+
+//   return (
+//     <div className="selfysnap-loader">
+//       <div className="camera">
+//         <div className="shutter">
+//           <div className="aperture">
+//             {centerLogo ? (
+//               <img src={centerLogo} alt="logo" />
+//             ) : (
+//               <span style={{ fontSize: "36px" }}>📸</span>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+
+//       <div className="brand">
+//         {brandLogo ? (
+//           <img src={brandLogo} alt="Brand" style={{ height: "80px", objectFit: "contain" }} />
+//         ) : (
+//           "SELFYSNAP"
+//         )}
+//       </div>
+
+//       <div className="progress-bar">
+//         <div className="progress-fill" style={{ width: `${progress}%` }} />
+//       </div>
+
+//       <p className="loading-text">Loading marketplace... {Math.round(progress)}%</p>
+
+//       <style>{`
+//         :root {
+//           /* Change these colors to match your logo */
+//           --bg-color: #0f172a;              /* dark background */
+//           --shutter-gradient: conic-gradient(#3b82f6, #06b6d4, #3b82f6);  /* blue‑cyan */
+//           --progress-gradient: linear-gradient(90deg, #3b82f6, #06b6d4);
+//           --text-color: white;
+//         }
+
+//         .selfysnap-loader{
+//           position:fixed;
+//           top:0;
+//           left:0;
+//           width:100%;
+//           height:100%;
+//           background:var(--bg-color);
+//           display:flex;
+//           flex-direction:column;
+//           justify-content:center;
+//           align-items:center;
+//           z-index:9999;
+//           color:var(--text-color);
+//         }
+
+//         .camera{
+//           width:150px;
+//           height:150px;
+//           border-radius:50%;
+//           background:rgba(255,255,255,0.05);
+//           display:flex;
+//           align-items:center;
+//           justify-content:center;
+//           margin-bottom:20px;
+//         }
+
+//         .shutter{
+//           width:100px;
+//           height:100px;
+//           border-radius:50%;
+//           background:var(--shutter-gradient);
+//           display:flex;
+//           align-items:center;
+//           justify-content:center;
+//           animation:spin 2s linear infinite;
+//         }
+
+//         .aperture{
+//           width:70px;
+//           height:70px;
+//           border-radius:50%;
+//           background:#000;
+//           display:flex;
+//           align-items:center;
+//           justify-content:center;
+//         }
+
+//         .aperture img{
+//           width:60px;
+//           height:60px;
+//           border-radius:50%;
+//         }
+
+//         .brand{
+//           font-size:28px;
+//           font-weight:700;
+//           margin-bottom:20px;
+//         }
+
+//         .progress-bar{
+//           width:250px;
+//           height:6px;
+//           background:rgba(255,255,255,0.2);
+//           border-radius:10px;
+//           overflow:hidden;
+//         }
+
+//         .progress-fill{
+//           height:100%;
+//           background:var(--progress-gradient);
+//           transition:width 0.2s;
+//         }
+
+//         .loading-text{
+//           margin-top:15px;
+//           font-size:14px;
+//           opacity:0.8;
+//         }
+
+//         @keyframes spin{
+//           to{transform:rotate(360deg)}
+//         }
+//       `}</style>
+//     </div>
+//   );
+// };
+
+// /** ScrollToTop Component */
+// const ScrollToTop: React.FC<{ duration?: number }> = ({ duration = 2000 }) => {
+//   const { pathname } = useLocation();
+//   const [loading, setLoading] = useState(false);
+
+//   useEffect(() => {
+//     setLoading(true);
+//     window.scrollTo({ top: 0, behavior: "smooth" });
+
+//     const timer = setTimeout(() => setLoading(false), duration);
+//     return () => clearTimeout(timer);
+//   }, [pathname, duration]);
+
+//   if (loading) {
+//     return (
+//       <SelfysnapLoader
+//         duration={duration}
+//         centerLogo="/logo34.png"
+//         brandLogo="/logo34.png"
+//         onComplete={() => setLoading(false)}
+//       />
+//     );
+//   }
+
+//   return null;
+// };
+
+// export default ScrollToTop;
+
+
+
+
+
+
+
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
 
 
 import React, { useEffect, useState } from "react";

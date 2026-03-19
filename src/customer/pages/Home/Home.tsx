@@ -133,6 +133,7 @@
 
 
 
+<<<<<<< HEAD
 
 
 
@@ -150,6 +151,8 @@
 
 
 
+=======
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)
 import { useEffect, useState } from 'react';
 import HomeCategory from './HomeCategory/HomeCategory';
 import TopBrand from './TopBrands/Grid';
@@ -303,4 +306,8 @@ const Home = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Home;
+=======
+export default Home;
+>>>>>>> 9dae341 (fix: updated code and added react-icons fix)

@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 export const API_URL = "http://localhost:8080";
-export const DEPLOYED_URL = "https://selfysnap-3.onrender.com"
+export const DEPLOYED_URL = "https://selfy-zabw.onrender.com"
+
 // change api
 
 export const api = axios.create({
