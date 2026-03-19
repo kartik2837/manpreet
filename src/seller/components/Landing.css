@@ -1,0 +1,107 @@
+.container {
+  font-family: Arial, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background: #131921;
+  color: white;
+}
+
+.start {
+  background: orange;
+  border: none;
+  padding: 8px 16px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.login {
+  background: transparent;
+  color: white;
+  border: 1px solid white;
+  padding: 8px 16px;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  padding: 50px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-left h1 span {
+  color: orange;
+}
+
+/* Features */
+.features {
+  padding: 40px;
+  text-align: center;
+}
+
+.feature-box {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Testimonials */
+.testimonials {
+  padding: 40px;
+  text-align: center;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card {
+  width: 200px;
+}
+
+/* CTA */
+.cta {
+  text-align: center;
+  padding: 40px;
+  background: #f3f3f3;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px;
+  background: #131921;
+  color: white;
+}
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  animation: marquee 15s linear infinite;
+}
+@keyframes trainMove {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+.train {
+  animation: trainMove 12s linear infinite;
+}
