@@ -210,7 +210,7 @@ const Contact: React.FC = () => {
             name="_subject"
             value="New Contact Form Message - SelfySnap"
           />
-          <input type="hidden" name="_next" value="http://localhost:5173" />
+          <input type="hidden" name="_next" value="https://selfysnap.com" />
 
           <div style={row}>
             <div style={field}>

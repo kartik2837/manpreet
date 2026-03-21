@@ -190,9 +190,4 @@ function App() {
     </ThemeProvider>
   );
 }
-
-<<<<<<< HEAD
 export default App;
-=======
-export default App; 
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)

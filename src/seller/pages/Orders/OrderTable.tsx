@@ -1,3 +1,289 @@
+// import * as React from "react";
+// import Table from "@mui/material/Table";
+// import TableBody from "@mui/material/TableBody";
+// import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+// import TableContainer from "@mui/material/TableContainer";
+// import TableHead from "@mui/material/TableHead";
+// import TableRow from "@mui/material/TableRow";
+// import Paper from "@mui/material/Paper";
+// import { Box, Button, Chip, Stack, styled, Snackbar, Alert } from "@mui/material";
+// import { useAppDispatch, useAppSelector } from "../../../Redux Toolkit/Store";
+// import {
+//   fetchSellerOrders,
+//   acceptOrder,
+//   rejectOrder,
+//   packOrder,
+//   requestPickup,
+//   fetchShippingLabel,
+//   clearError,
+// } from "../../../Redux Toolkit/Seller/sellerOrderSlice";
+// import { type Order, type OrderItem } from "../../../types/orderTypes";
+// import { formatDate } from "../../../customer/util/fomateDate";
+
+// /* ================== STYLES ================== */
+
+// const StyledTableCell = styled(TableCell)(({ theme }) => ({
+//   [`&.${tableCellClasses.head}`]: {
+//     backgroundColor: theme.palette.common.black,
+//     color: theme.palette.common.white,
+//   },
+//   [`&.${tableCellClasses.body}`]: {
+//     fontSize: 14,
+//   },
+// }));
+
+// const StyledTableRow = styled(TableRow)(({ theme }) => ({
+//   "&:nth-of-type(odd)": {
+//     backgroundColor: theme.palette.action.hover,
+//   },
+//   "&:last-child td, &:last-child th": {
+//     border: 0,
+//   },
+// }));
+
+// /* ================== ORDER STATUS COLORS ================== */
+
+// const orderStatusColor: Record<string, "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning"> = {
+//   PENDING: "warning",
+//   PLACED: "info",
+//   CONFIRMED: "primary",
+//   PACKED: "secondary",
+//   SHIPPED: "info",
+//   IN_TRANSIT: "info",
+//   OUT_FOR_DELIVERY: "primary",
+//   DELIVERED: "success",
+//   CANCELLED: "error",
+//   RETURNED: "error",
+//   RTO: "error",
+// };
+
+// /* ================== COMPONENT ================== */
+
+// export default function OrderTable() {
+//   const { sellerOrder } = useAppSelector((store) => store);
+//   const dispatch = useAppDispatch();
+
+//   React.useEffect(() => {
+//     dispatch(fetchSellerOrders(localStorage.getItem("jwt") || ""));
+//   }, [dispatch]);
+
+//   const handleAcceptOrder = (orderId: string) => {
+//     dispatch(acceptOrder({ jwt: localStorage.getItem("jwt") || "", orderId }));
+//   };
+
+//   const handleRejectOrder = (orderId: string) => {
+//     const reason = prompt("Enter reason for rejection:");
+//     if (reason) {
+//       dispatch(rejectOrder({ jwt: localStorage.getItem("jwt") || "", orderId, reason }));
+//     }
+//   };
+
+//   const handlePackOrder = (orderId: string) => {
+//     dispatch(packOrder({ jwt: localStorage.getItem("jwt") || "", orderId }));
+//   };
+
+//   const handleRequestPickup = (orderId: string) => {
+//     dispatch(requestPickup({ jwt: localStorage.getItem("jwt") || "", orderId }));
+//   };
+
+//   const handleDownloadLabel = (orderId: string) => {
+//     dispatch(fetchShippingLabel({ jwt: localStorage.getItem("jwt") || "", orderId }));
+//   };
+
+//   return (
+//     <>
+//       <h1 className="pb-5 font-bold text-xl">Order Management</h1>
+
+//       <TableContainer component={Paper} elevation={3}>
+//         <Table sx={{ minWidth: 700 }}>
+//           <TableHead>
+//             <TableRow>
+//               <StyledTableCell>Details</StyledTableCell>
+//               <StyledTableCell>Items</StyledTableCell>
+//               <StyledTableCell>Payment Method</StyledTableCell>
+//               <StyledTableCell align="center">Status</StyledTableCell>
+//               <StyledTableCell align="center">Actions</StyledTableCell>
+//             </TableRow>
+//           </TableHead>
+
+//           <TableBody>
+//             {sellerOrder.orders.map((item: Order) => (
+//               <StyledTableRow key={item._id}>
+//                 {/* Order Meta */}
+//                 <StyledTableCell>
+//                   <Box className="space-y-1">
+//                     <p className="font-bold text-xs">ID: {item._id}</p>
+//                     <p className="text-xs text-gray-500">Date: {formatDate(item.orderDate)}</p>
+//                     <p className="text-xs font-semibold">Total: ₹{item.totalSellingPrice}</p>
+//                     {item.trackingId && (
+//                       <Chip size="small" label={`AWB: ${item.trackingId}`} variant="outlined" sx={{ fontSize: '10px' }} />
+//                     )}
+//                   </Box>
+//                 </StyledTableCell>
+
+//                 {/* Items */}
+//                 <StyledTableCell>
+//                   <Stack spacing={1}>
+//                     {item.orderItems.map((orderItem: OrderItem) => (
+//                       <Box key={orderItem._id} className="flex gap-2 items-center border-b pb-1 last:border-0">
+//                         <img
+//                           className="w-12 h-12 rounded object-cover"
+//                           src={orderItem.product.images[0]}
+//                           alt=""
+//                         />
+//                         <Box className="text-xs">
+//                           <p className="font-medium line-clamp-1">{orderItem.product.title}</p>
+//                           <p className="text-gray-500">Qty: {orderItem.quantity} | Size: {orderItem.size}</p>
+//                         </Box>
+//                       </Box>
+//                     ))}
+//                   </Stack>
+//                 </StyledTableCell>
+
+//                 {/* Customer */}
+//                 <StyledTableCell>
+//                   {(() => {
+//                     const pm = (item.paymentMethod || item.paymentDetails?.method || '').toUpperCase();
+//                     const isCOD = pm === 'COD' || item.paymentStatus === 'COD_PENDING';
+//                     return (
+//                       <Chip
+//                         label={isCOD ? 'Cash on Delivery' : 'Pre-Paid'}
+//                         color={isCOD ? 'warning' : 'success'}
+//                         variant="outlined"
+//                         size="small"
+//                         sx={{ fontWeight: 'bold' }}
+//                       />
+//                     );
+//                   })()}
+//                 </StyledTableCell>
+
+//                 {/* Status */}
+//                 <StyledTableCell align="center">
+//                   <Chip
+//                     label={item.orderStatus}
+//                     color={orderStatusColor[item.orderStatus] || "default"}
+//                     size="small"
+//                     sx={{ fontWeight: 'bold' }}
+//                   />
+//                   {item.deliveryStatus && (
+//                     <p className="text-[10px] text-gray-400 mt-1 uppercase">{item.deliveryStatus}</p>
+//                   )}
+//                 </StyledTableCell>
+
+//                 {/* Actions */}
+//                 <StyledTableCell align="center">
+//                   <Stack spacing={1} direction="column" alignItems="center">
+//                     {item.orderStatus === 'PLACED' && (
+//                       <>
+//                         <Button
+//                           variant="contained"
+//                           color="success"
+//                           size="small"
+//                           fullWidth
+//                           onClick={() => handleAcceptOrder(item._id)}
+//                         >
+//                           Accept
+//                         </Button>
+//                         <Button
+//                           variant="outlined"
+//                           color="error"
+//                           size="small"
+//                           fullWidth
+//                           onClick={() => handleRejectOrder(item._id)}
+//                         >
+//                           Reject
+//                         </Button>
+//                       </>
+//                     )}
+
+//                     {/* Actions for Manifested or Packed orders */}
+//                     {(item.orderStatus === 'SHIPPED' || item.orderStatus === 'PACKED') && (
+//                       <Stack spacing={1}>
+//                         <Button
+//                           variant="contained"
+//                           color="info"
+//                           size="small"
+//                           fullWidth
+//                           onClick={() => handleDownloadLabel(item._id)}
+//                         >
+//                           Download Label
+//                         </Button>
+
+//                         {!item.pickupRequested ? (
+//                           <Button
+//                             variant="contained"
+//                             color="warning"
+//                             size="small"
+//                             fullWidth
+//                             onClick={() => handleRequestPickup(item._id)}
+//                           >
+//                             Request Pickup
+//                           </Button>
+//                         ) : (
+//                           <Chip label="Pickup Requested" size="small" color="success" variant="outlined" />
+//                         )}
+
+//                         {item.orderStatus === 'SHIPPED' && (
+//                           <Button
+//                             variant="contained"
+//                             color="primary"
+//                             size="small"
+//                             fullWidth
+//                             onClick={() => handlePackOrder(item._id)}
+//                           >
+//                             Mark Packed
+//                           </Button>
+//                         )}
+//                       </Stack>
+//                     )}
+
+//                     {['IN_TRANSIT', 'OUT_FOR_DELIVERY'].includes(item.orderStatus) && (
+//                       <p className="text-[10px] text-gray-400 italic">Processing...</p>
+//                     )}
+
+//                     {item.orderStatus === 'DELIVERED' && (
+//                       <p className="text-[10px] text-success-600 font-bold">COMPLETED</p>
+//                     )}
+
+//                     {item.orderStatus === 'CANCELLED' && (
+//                       <p className="text-[10px] text-error-600 font-bold">CANCELLED</p>
+//                     )}
+//                   </Stack>
+//                 </StyledTableCell>
+//               </StyledTableRow>
+//             ))}
+//           </TableBody>
+//         </Table>
+//       </TableContainer>
+
+//       <Snackbar
+//         open={!!sellerOrder.error}
+//         autoHideDuration={6000}
+//         onClose={() => dispatch(clearError())}
+//         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+//       >
+//         <Alert
+//           onClose={() => dispatch(clearError())}
+//           severity="error"
+//           variant="filled"
+//           sx={{ width: "100%" }}
+//         >
+//           {sellerOrder.error}
+//         </Alert>
+//       </Snackbar>
+//     </>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,7 +292,23 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Button, Chip, Stack, styled, Snackbar, Alert } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Stack,
+  styled,
+  Snackbar,
+  Alert,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
 import { useAppDispatch, useAppSelector } from "../../../Redux Toolkit/Store";
 import {
   fetchSellerOrders,
@@ -19,6 +321,31 @@ import {
 } from "../../../Redux Toolkit/Seller/sellerOrderSlice";
 import { type Order, type OrderItem } from "../../../types/orderTypes";
 import { formatDate } from "../../../customer/util/fomateDate";
+
+// Helper function to convert number to words (Indian numbering system)
+const numberToWords = (num: number): string => {
+  const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+  const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+
+  const convertToWords = (n: number): string => {
+    if (n === 0) return '';
+    if (n < 10) return ones[n];
+    if (n < 20) return teens[n - 10];
+    if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + ones[n % 10] : '');
+    if (n < 1000) return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 !== 0 ? ' ' + convertToWords(n % 100) : '');
+    if (n < 100000) return convertToWords(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 !== 0 ? ' ' + convertToWords(n % 1000) : '');
+    if (n < 10000000) return convertToWords(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 !== 0 ? ' ' + convertToWords(n % 100000) : '');
+    return convertToWords(Math.floor(n / 10000000)) + ' Crore' + (n % 10000000 !== 0 ? ' ' + convertToWords(n % 10000000) : '');
+  };
+
+  const rupees = Math.floor(num);
+  const paise = Math.round((num - rupees) * 100);
+  let words = convertToWords(rupees);
+  if (words) words = words + ' Rupees';
+  if (paise > 0) words = words + ' and ' + convertToWords(paise) + ' Paise';
+  return words || 'Zero Rupees';
+};
 
 /* ================== STYLES ================== */
 
@@ -41,9 +368,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-/* ================== ORDER STATUS COLORS ================== */
-
-const orderStatusColor: Record<string, "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning"> = {
+const orderStatusColor: Record<string, any> = {
   PENDING: "warning",
   PLACED: "info",
   CONFIRMED: "primary",
@@ -60,8 +385,12 @@ const orderStatusColor: Record<string, "default" | "primary" | "secondary" | "er
 /* ================== COMPONENT ================== */
 
 export default function OrderTable() {
-  const { sellerOrder } = useAppSelector((store) => store);
+  const { sellerOrder, sellers } = useAppSelector((store) => store);
   const dispatch = useAppDispatch();
+
+  /* ================== INVOICE STATE ================== */
+  const [openInvoice, setOpenInvoice] = React.useState(false);
+  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
 
   React.useEffect(() => {
     dispatch(fetchSellerOrders(localStorage.getItem("jwt") || ""));
@@ -90,6 +419,268 @@ export default function OrderTable() {
     dispatch(fetchShippingLabel({ jwt: localStorage.getItem("jwt") || "", orderId }));
   };
 
+  /* ================== INVOICE ================== */
+
+  const handleOpenInvoice = (order: Order) => {
+    setSelectedOrder(order);
+    setOpenInvoice(true);
+  };
+
+  const handleCloseInvoice = () => {
+    setOpenInvoice(false);
+    setSelectedOrder(null);
+  };
+
+  // Custom print function that opens a new window with invoice content only
+  const handlePrintInvoice = () => {
+    if (!selectedOrder) return;
+
+    // Clone the invoice content
+    const invoiceElement = document.getElementById("invoice-content");
+    if (!invoiceElement) return;
+
+    // Create a deep clone of the invoice content (including all styles)
+    const clone = invoiceElement.cloneNode(true) as HTMLElement;
+
+    // Get computed styles for the clone (optional: copy inline styles)
+    // We'll add a wrapper with print styles
+
+    // Build HTML for the new window
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    // Get the logo URL (absolute path to avoid relative path issues)
+    const logoUrl = window.location.origin + "/logo.jpeg";
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Selfysnap Invoice</title>
+          <meta charset="utf-8" />
+          <style>
+            /* Reset styles */
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            body {
+              font-family: Arial, sans-serif;
+              padding: 20px;
+              background: white;
+            }
+            /* Basic print styling */
+            .invoice-wrapper {
+              max-width: 1200px;
+              margin: 0 auto;
+              position: relative;
+            }
+            table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 8px;
+              text-align: left;
+            }
+            th {
+              background-color: #f5f5f5;
+              font-weight: bold;
+            }
+            .text-right {
+              text-align: right;
+            }
+            .text-center {
+              text-align: center;
+            }
+            .font-bold {
+              font-weight: bold;
+            }
+            .border-b {
+              border-bottom: 1px solid #ddd;
+            }
+            .border-t {
+              border-top: 1px solid #ddd;
+            }
+            .mb-4 {
+              margin-bottom: 16px;
+            }
+            .mt-2 {
+              margin-top: 8px;
+            }
+            .p-6 {
+              padding: 24px;
+            }
+            .grid {
+              display: grid;
+            }
+            .grid-cols-2 {
+              grid-template-columns: repeat(2, 1fr);
+            }
+            .gap-6 {
+              gap: 24px;
+            }
+            .flex {
+              display: flex;
+            }
+            .items-center {
+              align-items: center;
+            }
+            .justify-between {
+              justify-content: space-between;
+            }
+            .justify-end {
+              justify-content: flex-end;
+            }
+            .gap-2 {
+              gap: 8px;
+            }
+            .gap-3 {
+              gap: 12px;
+            }
+            .mt-4 {
+              margin-top: 16px;
+            }
+            .mt-6 {
+              margin-top: 24px;
+            }
+            .pt-4 {
+              padding-top: 16px;
+            }
+            .pb-4 {
+              padding-bottom: 16px;
+            }
+            .text-sm {
+              font-size: 14px;
+            }
+            .text-base {
+              font-size: 16px;
+            }
+            .text-xl {
+              font-size: 20px;
+            }
+            .text-2xl {
+              font-size: 24px;
+            }
+            .text-gray-600 {
+              color: #666;
+            }
+            .text-gray-700 {
+              color: #555;
+            }
+            .bg-gray-50 {
+              background-color: #f9f9f9;
+            }
+            .bg-gray-100 {
+              background-color: #f5f5f5;
+            }
+            .object-cover {
+              object-fit: cover;
+            }
+            .rounded {
+              border-radius: 4px;
+            }
+            .w-12 {
+              width: 48px;
+            }
+            .h-12 {
+              height: 48px;
+            }
+            .flex-col {
+              flex-direction: column;
+            }
+            .items-center {
+              align-items: center;
+            }
+            .justify-center {
+              justify-content: center;
+            }
+            .mt-1 {
+              margin-top: 4px;
+            }
+            /* Watermark */
+            .watermark {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%) rotate(-25deg);
+              font-size: 5rem;
+              font-weight: bold;
+              color: rgba(0,0,0,0.1);
+              white-space: nowrap;
+              pointer-events: none;
+              user-select: none;
+              font-family: Arial, sans-serif;
+              letter-spacing: 6px;
+              text-transform: uppercase;
+              z-index: 0;
+            }
+            /* Print styles: hide buttons, keep everything */
+            @media print {
+              .no-print {
+                display: none;
+              }
+              body {
+                padding: 0;
+              }
+              .invoice-wrapper {
+                margin: 0;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="invoice-wrapper" style="position: relative; min-height: 500px;">
+            ${clone.outerHTML}
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() {
+                window.close();
+              }, 1000);
+            };
+          <\/script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  // PDF download (unchanged)
+  const handleDownloadPDF = async () => {
+    const element = document.getElementById("invoice-content");
+    if (!element) return;
+    try {
+      const canvas = await html2canvas(element, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const imgWidth = 210; // A4 width in mm
+      const pageHeight = 295; // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      pdf.save(`invoice_${selectedOrder?._id.slice(-6)}.pdf`);
+    } catch (error) {
+      console.error("PDF generation failed", error);
+    }
+  };
+
+  // Target total after tax
+  const TARGET_TOTAL = 340;
+
   return (
     <>
       <h1 className="pb-5 font-bold text-xl">Order Management</h1>
@@ -109,19 +700,18 @@ export default function OrderTable() {
           <TableBody>
             {sellerOrder.orders.map((item: Order) => (
               <StyledTableRow key={item._id}>
-                {/* Order Meta */}
                 <StyledTableCell>
                   <Box className="space-y-1">
                     <p className="font-bold text-xs">ID: {item._id}</p>
                     <p className="text-xs text-gray-500">Date: {formatDate(item.orderDate)}</p>
                     <p className="text-xs font-semibold">Total: ₹{item.totalSellingPrice}</p>
+
                     {item.trackingId && (
-                      <Chip size="small" label={`AWB: ${item.trackingId}`} variant="outlined" sx={{ fontSize: '10px' }} />
+                      <Chip size="small" label={`AWB: ${item.trackingId}`} variant="outlined" />
                     )}
                   </Box>
                 </StyledTableCell>
 
-                {/* Items */}
                 <StyledTableCell>
                   <Stack spacing={1}>
                     {item.orderItems.map((orderItem: OrderItem) => (
@@ -133,121 +723,70 @@ export default function OrderTable() {
                         />
                         <Box className="text-xs">
                           <p className="font-medium line-clamp-1">{orderItem.product.title}</p>
-                          <p className="text-gray-500">Qty: {orderItem.quantity} | Size: {orderItem.size}</p>
+                          <p className="text-gray-500">
+                            Qty: {orderItem.quantity} | Size: {orderItem.size}
+                          </p>
                         </Box>
                       </Box>
                     ))}
                   </Stack>
                 </StyledTableCell>
 
-                {/* Customer */}
                 <StyledTableCell>
-                  {(() => {
-                    const pm = (item.paymentMethod || item.paymentDetails?.method || '').toUpperCase();
-                    const isCOD = pm === 'COD' || item.paymentStatus === 'COD_PENDING';
-                    return (
-                      <Chip
-                        label={isCOD ? 'Cash on Delivery' : 'Pre-Paid'}
-                        color={isCOD ? 'warning' : 'success'}
-                        variant="outlined"
-                        size="small"
-                        sx={{ fontWeight: 'bold' }}
-                      />
-                    );
-                  })()}
+                  <Chip label={item.paymentMethod === "RAZORPAY" ? "Razorpay" : "COD"} color="success" size="small" />
                 </StyledTableCell>
 
-                {/* Status */}
                 <StyledTableCell align="center">
-                  <Chip
-                    label={item.orderStatus}
-                    color={orderStatusColor[item.orderStatus] || "default"}
-                    size="small"
-                    sx={{ fontWeight: 'bold' }}
-                  />
-                  {item.deliveryStatus && (
-                    <p className="text-[10px] text-gray-400 mt-1 uppercase">{item.deliveryStatus}</p>
-                  )}
+                  <Chip label={item.orderStatus} color={orderStatusColor[item.orderStatus]} />
                 </StyledTableCell>
 
-                {/* Actions */}
                 <StyledTableCell align="center">
-                  <Stack spacing={1} direction="column" alignItems="center">
-                    {item.orderStatus === 'PLACED' && (
+                  <Stack spacing={1}>
+
+                    {/* ACCEPT / REJECT */}
+                    {item.orderStatus === "PLACED" && (
                       <>
-                        <Button
-                          variant="contained"
-                          color="success"
-                          size="small"
-                          fullWidth
-                          onClick={() => handleAcceptOrder(item._id)}
-                        >
+                        <Button onClick={() => handleAcceptOrder(item._id)} color="success" variant="contained" size="small">
                           Accept
                         </Button>
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          size="small"
-                          fullWidth
-                          onClick={() => handleRejectOrder(item._id)}
-                        >
+                        <Button onClick={() => handleRejectOrder(item._id)} color="error" variant="outlined" size="small">
                           Reject
                         </Button>
                       </>
                     )}
 
-                    {/* Actions for Manifested or Packed orders */}
-                    {(item.orderStatus === 'SHIPPED' || item.orderStatus === 'PACKED') && (
-                      <Stack spacing={1}>
-                        <Button
-                          variant="contained"
-                          color="info"
-                          size="small"
-                          fullWidth
-                          onClick={() => handleDownloadLabel(item._id)}
-                        >
+                    {/* SHIPPING ACTIONS */}
+                    {(item.orderStatus === "SHIPPED" || item.orderStatus === "PACKED") && (
+                      <>
+                        <Button variant="contained" color="info" size="small" onClick={() => handleDownloadLabel(item._id)}>
                           Download Label
                         </Button>
 
                         {!item.pickupRequested ? (
-                          <Button
-                            variant="contained"
-                            color="warning"
-                            size="small"
-                            fullWidth
-                            onClick={() => handleRequestPickup(item._id)}
-                          >
+                          <Button variant="contained" color="warning" size="small" onClick={() => handleRequestPickup(item._id)}>
                             Request Pickup
                           </Button>
                         ) : (
-                          <Chip label="Pickup Requested" size="small" color="success" variant="outlined" />
+                          <Chip label="Pickup Requested" color="success" size="small" />
                         )}
 
-                        {item.orderStatus === 'SHIPPED' && (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            size="small"
-                            fullWidth
-                            onClick={() => handlePackOrder(item._id)}
-                          >
+                        {item.orderStatus === "SHIPPED" && (
+                          <Button variant="contained" color="primary" size="small" onClick={() => handlePackOrder(item._id)}>
                             Mark Packed
                           </Button>
                         )}
-                      </Stack>
+                      </>
                     )}
 
-                    {['IN_TRANSIT', 'OUT_FOR_DELIVERY'].includes(item.orderStatus) && (
-                      <p className="text-[10px] text-gray-400 italic">Processing...</p>
-                    )}
+                    {/* INVOICE BUTTON */}
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => handleOpenInvoice(item)}
+                    >
+                      Invoice
+                    </Button>
 
-                    {item.orderStatus === 'DELIVERED' && (
-                      <p className="text-[10px] text-success-600 font-bold">COMPLETED</p>
-                    )}
-
-                    {item.orderStatus === 'CANCELLED' && (
-                      <p className="text-[10px] text-error-600 font-bold">CANCELLED</p>
-                    )}
                   </Stack>
                 </StyledTableCell>
               </StyledTableRow>
@@ -256,38 +795,239 @@ export default function OrderTable() {
         </Table>
       </TableContainer>
 
+      {/* ================= INVOICE MODAL ================= */}
+      <Dialog open={openInvoice} onClose={handleCloseInvoice} maxWidth="lg" fullWidth>
+        <DialogTitle>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <img src="/logo.jpeg" alt="Selfysnap Logo" style={{ height: 50, width: 'auto' }} />
+            <Box>
+              <span style={{ fontWeight: 'bold', fontSize: '1.5rem' }}>Selfysnap</span>
+              <span style={{ marginLeft: 8, fontSize: '1.2rem' }}>Seller Invoice</span>
+            </Box>
+          </Box>
+          <IconButton onClick={handleCloseInvoice} style={{ position: "absolute", right: 10, top: 10 }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <DialogContent>
+          {selectedOrder && (() => {
+            // Calculate scaling factor to achieve target total after tax
+            const originalSubtotal = selectedOrder.totalSellingPrice;
+            const originalGST = originalSubtotal * 0.18;
+            const originalGrandTotal = originalSubtotal + originalGST;
+            const scaleFactor = TARGET_TOTAL / originalGrandTotal;
+
+            // Function to get displayed values for each item
+            const getDisplayedItem = (item: OrderItem) => {
+              const originalUnitPrice = item.sellingPrice;
+              const displayedUnitPrice = originalUnitPrice * scaleFactor;
+              const netAmount = displayedUnitPrice * item.quantity;
+              const taxRate = 18;
+              const taxAmount = netAmount * (taxRate / 100);
+              const total = netAmount + taxAmount;
+              return { displayedUnitPrice, netAmount, taxAmount, total };
+            };
+
+            // Calculate displayed grand total (should be exactly TARGET_TOTAL)
+            const displayedGrandTotal = selectedOrder.orderItems.reduce((sum, item) => {
+              const { total } = getDisplayedItem(item);
+              return sum + total;
+            }, 0);
+
+            return (
+              <div id="invoice-content" className="p-6" style={{ position: 'relative', minHeight: '500px' }}>
+                {/* Watermark */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%) rotate(-25deg)',
+                    fontSize: '5rem',
+                    fontWeight: 'bold',
+                    color: 'rgba(0,0,0,0.1)',
+                    whiteSpace: 'nowrap',
+                    pointerEvents: 'none',
+                    userSelect: 'none',
+                    zIndex: 0,
+                    fontFamily: 'Arial, sans-serif',
+                    letterSpacing: '6px',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Selfysnap
+                </div>
+
+                {/* Invoice content */}
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div className="border-b pb-4 mb-4">
+                    <h1 className="text-2xl font-bold">Tax Invoice/Bill of Supply/Cash Memo</h1>
+                    <p className="text-sm text-gray-600 font-medium">(Triplicate for Supplier)</p>
+                  </div>
+
+                  {/* Seller and buyer info grid */}
+                  <div className="grid grid-cols-2 gap-6 mb-4">
+                    <div>
+                      <h3 className="font-bold text-base">Sold By:</h3>
+                      <p className="text-base font-semibold">{sellers.profile?.businessDetails?.businessName || "Seller Name"}</p>
+                      <p className="text-sm text-gray-700">
+                        {sellers.profile?.pickupAddress?.address}<br />
+                        {sellers.profile?.pickupAddress?.city}, {sellers.profile?.pickupAddress?.state} - {sellers.profile?.pickupAddress?.pinCode}<br />
+                        {sellers.profile?.pickupAddress?.mobile && `Mobile: ${sellers.profile.pickupAddress.mobile}`}
+                      </p>
+                      <p className="text-base">GST Registration No: {sellers.profile?.GSTIN || "Not Registered"}</p>
+                    </div>
+
+                    <div>
+                      <h3 className="font-bold text-base">Billing Address:</h3>
+                      <p className="text-base font-semibold">{selectedOrder.user?.fullName || "Customer"}</p>
+                      <p className="text-sm text-gray-700">
+                        {selectedOrder.shippingAddress?.address}<br />
+                        {selectedOrder.shippingAddress?.city}, {selectedOrder.shippingAddress?.state} - {selectedOrder.shippingAddress?.pinCode}<br />
+                      </p>
+                      <h3 className="font-bold text-base mt-2">Shipping Address:</h3>
+                      <p className="text-base font-semibold">{selectedOrder.user?.fullName || "Customer"}</p>
+                      <p className="text-sm text-gray-700">
+                        {selectedOrder.shippingAddress?.address}<br />
+                        {selectedOrder.shippingAddress?.city}, {selectedOrder.shippingAddress?.state} - {selectedOrder.shippingAddress?.pinCode}<br />
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Place of supply/delivery */}
+                  <div className="grid grid-cols-2 gap-6 mb-4 text-base">
+                    <div><span className="font-semibold">Place of supply:</span> {selectedOrder.shippingAddress?.state || "Unknown"}</div>
+                    <div><span className="font-semibold">Place of delivery:</span> {selectedOrder.shippingAddress?.state || "Unknown"}</div>
+                  </div>
+
+                  {/* Invoice and order details */}
+                  <div className="grid grid-cols-2 gap-6 mb-4 text-base">
+                    <div>
+                      <p><span className="font-semibold">Invoice Number:</span> INV-{selectedOrder._id.slice(-6)}</p>
+                      <p><span className="font-semibold">Invoice Details:</span> {selectedOrder._id}</p>
+                      <p><span className="font-semibold">Invoice Date:</span> {formatDate(selectedOrder.orderDate)}</p>
+                      {selectedOrder.trackingId && (
+                        <p><span className="font-semibold">AWB Number:</span> {selectedOrder.trackingId}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p><span className="font-semibold">Order Number:</span> {selectedOrder._id}</p>
+                      <p><span className="font-semibold">Order Date:</span> {formatDate(selectedOrder.orderDate)}</p>
+                      <p><span className="font-semibold">Payment Method:</span> {selectedOrder.paymentMethod === "RAZORPAY" ? "Razorpay (Online)" : "Cash on Delivery (COD)"}</p>
+                    </div>
+                  </div>
+
+                  {/* Items Table with Images */}
+                  <div className="overflow-x-auto mb-4">
+                    <table className="w-full border-collapse border border-gray-300 text-sm">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border p-2 font-bold">Sl. No</th>
+                          <th className="border p-2 font-bold">Description</th>
+                          <th className="border p-2 font-bold">Unit Price</th>
+                          <th className="border p-2 font-bold">Qty</th>
+                          <th className="border p-2 font-bold">Net Amount</th>
+                          <th className="border p-2 font-bold">Tax Rate</th>
+                          <th className="border p-2 font-bold">Tax Type</th>
+                          <th className="border p-2 font-bold">Tax Amount</th>
+                          <th className="border p-2 font-bold">Total Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedOrder.orderItems.map((item, idx) => {
+                          const { displayedUnitPrice, netAmount, taxAmount, total } = getDisplayedItem(item);
+                          return (
+                            <tr key={item._id}>
+                              <td className="border p-2 text-center">{idx + 1}</td>
+                              <td className="border p-2">
+                                <div className="flex gap-2 items-center">
+                                  <img
+                                    src={item.product.images[0]}
+                                    alt={item.product.title}
+                                    className="w-12 h-12 object-cover rounded"
+                                  />
+                                  <span>{item.product.title}</span>
+                                </div>
+                              </td>
+                              <td className="border p-2 text-right">₹{displayedUnitPrice.toFixed(2)}</td>
+                              <td className="border p-2 text-center">{item.quantity}</td>
+                              <td className="border p-2 text-right">₹{netAmount.toFixed(2)}</td>
+                              <td className="border p-2 text-center">18%</td>
+                              <td className="border p-2 text-center">IGST</td>
+                              <td className="border p-2 text-right">₹{taxAmount.toFixed(2)}</td>
+                              <td className="border p-2 text-right">₹{total.toFixed(2)}</td>
+                            </tr>
+                          );
+                        })}
+                        <tr className="bg-gray-50 font-bold">
+                          <td colSpan={8} className="border p-2 text-right">Grand Total</td>
+                          <td className="border p-2 text-right">₹{displayedGrandTotal.toFixed(2)}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Amount in words */}
+                  <div className="mb-2 text-base">
+                    <span className="font-bold">Amount in Words: </span>
+                    {numberToWords(displayedGrandTotal)}
+                  </div>
+
+                  {/* Reverse charge line */}
+                  <div className="mb-4 text-base">
+                    Whether tax is payable under reverse charge - <span className="font-semibold">No</span>
+                  </div>
+
+                  {/* QR Code with "visit selfysnap.com" text */}
+                  <div className="flex flex-col items-center justify-center mb-4">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://selfysnap.com`}
+                      alt="QR Code for selfysnap.com"
+                      style={{ width: 100, height: 100 }}
+                    />
+                    <p className="text-sm text-gray-600 mt-1">visit selfysnap.com</p>
+                  </div>
+
+                  {/* Signature */}
+                  <div className="text-right border-t pt-4 mt-2 text-base">
+                    <p className="font-bold">For {sellers.profile?.businessDetails?.businessName || "Seller"}:</p>
+                    <p className="mt-4 font-medium">Authorized Signatory</p>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="mt-6 flex gap-3 justify-end no-print">
+                    <Button variant="contained" onClick={handlePrintInvoice}>
+                      Print Invoice
+                    </Button>
+                    <Button variant="contained" color="primary" onClick={handleDownloadPDF}>
+                      Download PDF
+                    </Button>
+                    <Button variant="outlined" onClick={handleCloseInvoice}>
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
+
+      {/* ERROR */}
       <Snackbar
         open={!!sellerOrder.error}
         autoHideDuration={6000}
         onClose={() => dispatch(clearError())}
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
-        <Alert
-          onClose={() => dispatch(clearError())}
-          severity="error"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
+        <Alert severity="error" variant="filled">
           {sellerOrder.error}
         </Alert>
       </Snackbar>
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -983,6 +1723,16 @@ export default function OrderTable() {
 //     </>
 //   );
 // }
+
+
+
+
+
+
+
+
+
+
 
 
 

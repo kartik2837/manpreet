@@ -237,9 +237,6 @@
 
 
 
-
-<<<<<<< HEAD
-=======
 // import React, { useEffect, useState } from "react";
 // import { useLocation } from "react-router-dom";
 
@@ -437,9 +434,6 @@
 
 
 
-
-
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
 
 
 import React, { useEffect, useState } from "react";

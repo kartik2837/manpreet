@@ -7,10 +7,7 @@
   font-variation-settings: "wdth" 100;
 }
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,8 +26,7 @@
   display: flex;
   width: max-content;
   animation: marquee 20s linear infinite;
-<<<<<<< HEAD
+
 }
-=======
-}
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
+
+

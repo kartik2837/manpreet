@@ -142,15 +142,13 @@
 
 
 
-<<<<<<< HEAD
 
 
 
 
 
 
-=======
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
+
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../../Config/Api";
 
@@ -444,8 +442,4 @@ const aiChatBotSlice = createSlice({
   },
 });
 
-<<<<<<< HEAD
 export default aiChatBotSlice.reducer;
-=======
-export default aiChatBotSlice.reducer;
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)

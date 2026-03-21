@@ -203,7 +203,6 @@
 
 
 
-<<<<<<< HEAD
 
 
 
@@ -219,8 +218,313 @@
 
 
 
-=======
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
+// import React, { useEffect, useState } from "react";
+
+// interface DesktopPopupProps {
+//   initialImageUrl: string;
+//   allowedMobile: string;
+//   delay?: number;
+// }
+
+// const DesktopPopup: React.FC<DesktopPopupProps> = ({
+//   initialImageUrl,
+//   allowedMobile,
+//   delay = 8000,
+// }) => {
+//   const [visible, setVisible] = useState(false);
+//   const [bannerUrl, setBannerUrl] = useState(initialImageUrl);
+//   const [showMobileInput, setShowMobileInput] = useState(false);
+//   const [mobileNumber, setMobileNumber] = useState("");
+//   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+//   const [dontShow, setDontShow] = useState(false);
+//   // Load saved banner + hide check
+//   useEffect(() => {
+//     const saved = localStorage.getItem("bannerUrl");
+//     const hide = localStorage.getItem("hidePopup");
+
+//     if (saved) setBannerUrl(saved);
+//     if (hide === "true") return;
+
+//   // Load saved banner
+//   useEffect(() => {
+//     const saved = localStorage.getItem("bannerUrl");
+//     if (saved) setBannerUrl(saved);
+//   }, []);
+
+
+//     const timer = setTimeout(() => setVisible(true), delay);
+//     return () => clearTimeout(timer);
+//   }, [delay]);
+
+
+//   // Disable scroll
+
+//   // Disable background scroll
+
+//   useEffect(() => {
+//     document.body.style.overflow = visible ? "hidden" : "auto";
+//   }, [visible]);
+
+
+
+
+//   // ESC key close
+
+//   useEffect(() => {
+//     const handleEsc = (e: KeyboardEvent) => {
+//       if (e.key === "Escape") setVisible(false);
+//     };
+//     window.addEventListener("keydown", handleEsc);
+//     return () => window.removeEventListener("keydown", handleEsc);
+//   }, []);
+
+//   const handleBannerClick = () => setShowMobileInput(true);
+
+//   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     if (e.target.files?.[0]) setUploadedFile(e.target.files[0]);
+//   };
+
+//   const handleSubmit = () => {
+//     const num = mobileNumber.replace(/\D/g, "");
+
+
+//     if (num.length !== 10) {
+//       alert("Enter valid 10 digit mobile");
+//       return;
+//     }
+
+
+//     if (num === allowedMobile && uploadedFile) {
+//       const reader = new FileReader();
+//       reader.onload = (e) => {
+//         const url = e.target?.result as string;
+//         setBannerUrl(url);
+//         localStorage.setItem("bannerUrl", url);
+//         setShowMobileInput(false);
+//       };
+//       reader.readAsDataURL(uploadedFile);
+
+//     } else {
+//       alert("Not allowed");
+
+//     }
+
+//     setMobileNumber("");
+//     setUploadedFile(null);
+
+//   };
+
+//   const handleClose = () => {
+//     if (dontShow) {
+//       localStorage.setItem("hidePopup", "true");
+//     }
+//     setVisible(false);
+
+
+//   };
+
+//   if (!visible) return null;
+
+//   return (
+//     <div className="overlay" onClick={handleClose}>
+//       <div className="popup" onClick={(e) => e.stopPropagation()}>
+        
+//         {/* Banner */}
+
+//     <div className="overlay" onClick={() => setVisible(false)}>
+//       <div className="popup" onClick={(e) => e.stopPropagation()}>
+        
+//         {/* Image */}
+
+//         <img
+//           src={bannerUrl}
+//           alt="banner"
+//           className="banner"
+//           onClick={handleBannerClick}
+//         />
+
+//         {/* Input */}
+//         {showMobileInput && (
+//           <div className="inputBox">
+//             <input
+//               type="tel"
+//               placeholder="Enter mobile number"
+//               value={mobileNumber}
+//               onChange={(e) => setMobileNumber(e.target.value)}
+//             />
+
+//             <label className="upload">
+
+//               Upload Banner
+
+//               Upload
+
+//               <input type="file" hidden onChange={handleFileSelect} />
+//             </label>
+
+//             <button onClick={handleSubmit}>Submit</button>
+//           </div>
+//         )}
+
+
+//         {/* Bottom options */}
+//         <div className="bottom">
+//           <label>
+//             <input
+//               type="checkbox"
+//               checked={dontShow}
+//               onChange={() => setDontShow(!dontShow)}
+//             />
+//             Do not show again
+//           </label>
+//         </div>
+
+//         {/* Close */}
+//         <button className="close" onClick={handleClose}>✕</button>
+
+//         {/* Close */}
+//         <button className="close" onClick={() => setVisible(false)}>✕</button>
+
+//       </div>
+
+//       <style>{`
+//         .overlay{
+//           position:fixed;
+//           inset:0;
+//           background:rgba(0,0,0,0.7);
+//           display:flex;
+//           justify-content:center;
+//           align-items:center;
+//           z-index:9999;
+
+//           backdrop-filter:blur(5px);
+
+//           padding:12px;
+//           backdrop-filter:blur(4px);
+
+//         }
+
+//         .popup{
+//           width:100%;
+//           max-width:420px;
+//           background:#fff;
+//           border-radius:14px;
+//           overflow:hidden;
+//           position:relative;
+
+//           animation:zoomIn .3s ease;
+// =======
+//           animation:zoomIn .35s ease;
+
+//         }
+
+//         .banner{
+//           width:100%;
+//           height:220px;
+//           object-fit:cover;
+//           cursor:pointer;
+//         }
+
+//         .inputBox{
+//           padding:12px;
+//           display:flex;
+//           flex-direction:column;
+//           gap:10px;
+//         }
+
+//         .inputBox input{
+//           padding:12px;
+//           border-radius:8px;
+//           border:1px solid #ccc;
+
+
+//           font-size:14px;
+
+//         }
+
+//         .upload{
+//           background:#111;
+//           color:#fff;
+//           padding:10px;
+//           border-radius:8px;
+//           text-align:center;
+//           cursor:pointer;
+//         }
+
+//         .inputBox button{
+//           background:#2563eb;
+//           color:#fff;
+//           padding:12px;
+//           border:none;
+//           border-radius:8px;
+//           cursor:pointer;
+//           font-weight:600;
+//         }
+
+
+//         .bottom{
+//           padding:10px;
+//           font-size:13px;
+//           text-align:center;
+//         }
+
+
+
+//         .close{
+//           position:absolute;
+//           top:10px;
+//           right:10px;
+//           background:#000;
+//           color:#fff;
+//           border:none;
+//           width:32px;
+//           height:32px;
+//           border-radius:50%;
+//           cursor:pointer;
+//         }
+
+//         @keyframes zoomIn{
+
+//           from{opacity:0;transform:scale(.85)}
+
+//           from{opacity:0;transform:scale(.8)}
+
+//           to{opacity:1;transform:scale(1)}
+//         }
+
+//         /* Tablet */
+//         @media(min-width:600px){
+//           .popup{ max-width:600px; }
+//           .banner{ height:300px; }
+//         }
+
+//         /* Desktop */
+//         @media(min-width:900px){
+//           .popup{ max-width:900px; }
+//           .banner{ height:450px; }
+//         }
+//       `}</style>
+//     </div>
+//   );
+// };
+
+// export default DesktopPopup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useEffect, useState } from "react";
 
 interface DesktopPopupProps {
@@ -241,7 +545,6 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [dontShow, setDontShow] = useState(false);
 
-<<<<<<< HEAD
   // Load saved banner + hide check
   useEffect(() => {
     const saved = localStorage.getItem("bannerUrl");
@@ -249,32 +552,17 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
 
     if (saved) setBannerUrl(saved);
     if (hide === "true") return;
-=======
-  // Load saved banner
-  useEffect(() => {
-    const saved = localStorage.getItem("bannerUrl");
-    if (saved) setBannerUrl(saved);
-  }, []);
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
 
     const timer = setTimeout(() => setVisible(true), delay);
     return () => clearTimeout(timer);
   }, [delay]);
 
-<<<<<<< HEAD
-  // Disable scroll
-=======
   // Disable background scroll
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
   useEffect(() => {
     document.body.style.overflow = visible ? "hidden" : "auto";
   }, [visible]);
 
-<<<<<<< HEAD
-  // ESC close
-=======
   // ESC key close
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") setVisible(false);
@@ -292,14 +580,11 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
   const handleSubmit = () => {
     const num = mobileNumber.replace(/\D/g, "");
 
-<<<<<<< HEAD
     if (num.length !== 10) {
       alert("Enter valid 10 digit mobile");
       return;
     }
 
-=======
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
     if (num === allowedMobile && uploadedFile) {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -309,16 +594,12 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
         setShowMobileInput(false);
       };
       reader.readAsDataURL(uploadedFile);
-<<<<<<< HEAD
     } else {
       alert("Not allowed");
-=======
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
     }
 
     setMobileNumber("");
     setUploadedFile(null);
-<<<<<<< HEAD
   };
 
   const handleClose = () => {
@@ -326,24 +607,15 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
       localStorage.setItem("hidePopup", "true");
     }
     setVisible(false);
-=======
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
   };
 
   if (!visible) return null;
 
   return (
-<<<<<<< HEAD
     <div className="overlay" onClick={handleClose}>
       <div className="popup" onClick={(e) => e.stopPropagation()}>
         
-        {/* Banner */}
-=======
-    <div className="overlay" onClick={() => setVisible(false)}>
-      <div className="popup" onClick={(e) => e.stopPropagation()}>
-        
         {/* Image */}
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         <img
           src={bannerUrl}
           alt="banner"
@@ -362,11 +634,7 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
             />
 
             <label className="upload">
-<<<<<<< HEAD
               Upload Banner
-=======
-              Upload
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
               <input type="file" hidden onChange={handleFileSelect} />
             </label>
 
@@ -374,8 +642,7 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           </div>
         )}
 
-<<<<<<< HEAD
-        {/* Bottom options */}
+        {/* Bottom */}
         <div className="bottom">
           <label>
             <input
@@ -389,10 +656,7 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
 
         {/* Close */}
         <button className="close" onClick={handleClose}>✕</button>
-=======
-        {/* Close */}
-        <button className="close" onClick={() => setVisible(false)}>✕</button>
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
+
       </div>
 
       <style>{`
@@ -404,12 +668,8 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           justify-content:center;
           align-items:center;
           z-index:9999;
-<<<<<<< HEAD
-          backdrop-filter:blur(5px);
-=======
           padding:12px;
           backdrop-filter:blur(4px);
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         }
 
         .popup{
@@ -419,11 +679,7 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           border-radius:14px;
           overflow:hidden;
           position:relative;
-<<<<<<< HEAD
           animation:zoomIn .3s ease;
-=======
-          animation:zoomIn .35s ease;
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         }
 
         .banner{
@@ -444,10 +700,7 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           padding:12px;
           border-radius:8px;
           border:1px solid #ccc;
-<<<<<<< HEAD
-=======
           font-size:14px;
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         }
 
         .upload{
@@ -469,15 +722,12 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
           font-weight:600;
         }
 
-<<<<<<< HEAD
         .bottom{
           padding:10px;
           font-size:13px;
           text-align:center;
         }
 
-=======
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
         .close{
           position:absolute;
           top:10px;
@@ -492,21 +742,15 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
         }
 
         @keyframes zoomIn{
-<<<<<<< HEAD
           from{opacity:0;transform:scale(.85)}
-=======
-          from{opacity:0;transform:scale(.8)}
->>>>>>> 9dae341 (fix: updated code and added react-icons fix)
           to{opacity:1;transform:scale(1)}
         }
 
-        /* Tablet */
         @media(min-width:600px){
           .popup{ max-width:600px; }
           .banner{ height:300px; }
         }
 
-        /* Desktop */
         @media(min-width:900px){
           .popup{ max-width:900px; }
           .banner{ height:450px; }
@@ -517,8 +761,6 @@ const DesktopPopup: React.FC<DesktopPopupProps> = ({
 };
 
 export default DesktopPopup;
-
-
 
 
 
