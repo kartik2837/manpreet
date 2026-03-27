@@ -182,7 +182,7 @@ const ProductDetails = () => {
                             <span className='text thin-line-through text-gray-400 '>₹{products.product?.mrpPrice}</span>
                             <span className='text-[#ff9644] font-semibold'>{products.product?.discountPercent}% off</span>
                         </div>
-                        <p className='text-sm'>Inclusive of all taxes. Free Shipping above ₹1500.</p>
+                        <p className='text-sm'>Inclusive of all taxes. Free Shipping above ₹799.</p>
                     </div>
 
                     <div className='mt-7 space-y-3'>

@@ -283,7 +283,6 @@
 
 
 
-
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -443,15 +442,9 @@ export default function OrderTable() {
     // Create a deep clone of the invoice content (including all styles)
     const clone = invoiceElement.cloneNode(true) as HTMLElement;
 
-    // Get computed styles for the clone (optional: copy inline styles)
-    // We'll add a wrapper with print styles
-
     // Build HTML for the new window
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
-
-    // Get the logo URL (absolute path to avoid relative path issues)
- <img src="/logo.jpeg" alt="Selfysnap Logo" />
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -679,9 +672,6 @@ export default function OrderTable() {
     }
   };
 
-  // Target total after tax
-  const TARGET_TOTAL = 340;
-
   return (
     <>
       <h1 className="pb-5 font-bold text-xl">Order Management</h1>
@@ -813,28 +803,8 @@ export default function OrderTable() {
 
         <DialogContent>
           {selectedOrder && (() => {
-            // Calculate scaling factor to achieve target total after tax
-            const originalSubtotal = selectedOrder.totalSellingPrice;
-            const originalGST = originalSubtotal * 0.18;
-            const originalGrandTotal = originalSubtotal + originalGST;
-            const scaleFactor = TARGET_TOTAL / originalGrandTotal;
-
-            // Function to get displayed values for each item
-            const getDisplayedItem = (item: OrderItem) => {
-              const originalUnitPrice = item.sellingPrice;
-              const displayedUnitPrice = originalUnitPrice * scaleFactor;
-              const netAmount = displayedUnitPrice * item.quantity;
-              const taxRate = 18;
-              const taxAmount = netAmount * (taxRate / 100);
-              const total = netAmount + taxAmount;
-              return { displayedUnitPrice, netAmount, taxAmount, total };
-            };
-
-            // Calculate displayed grand total (should be exactly TARGET_TOTAL)
-            const displayedGrandTotal = selectedOrder.orderItems.reduce((sum, item) => {
-              const { total } = getDisplayedItem(item);
-              return sum + total;
-            }, 0);
+            // Compute grand total from order (including tax)
+            const grandTotal = selectedOrder.totalSellingPrice;
 
             return (
               <div id="invoice-content" className="p-6" style={{ position: 'relative', minHeight: '500px' }}>
@@ -926,7 +896,7 @@ export default function OrderTable() {
                         <tr className="bg-gray-100">
                           <th className="border p-2 font-bold">Sl. No</th>
                           <th className="border p-2 font-bold">Description</th>
-                          <th className="border p-2 font-bold">Unit Price</th>
+                          <th className="border p-2 font-bold">Unit Price (Net)</th>
                           <th className="border p-2 font-bold">Qty</th>
                           <th className="border p-2 font-bold">Net Amount</th>
                           <th className="border p-2 font-bold">Tax Rate</th>
@@ -937,7 +907,15 @@ export default function OrderTable() {
                       </thead>
                       <tbody>
                         {selectedOrder.orderItems.map((item, idx) => {
-                          const { displayedUnitPrice, netAmount, taxAmount, total } = getDisplayedItem(item);
+                          // Assume item.sellingPrice is inclusive of tax (customer price)
+                          const inclusiveUnitPrice = item.sellingPrice;
+                          const netUnitPrice = inclusiveUnitPrice / 1.18; // Back‑calculate net unit price
+                          const quantity = item.quantity;
+                          const netAmount = netUnitPrice * quantity;
+                          const taxRate = 18; // IGST 18%
+                          const taxAmount = netAmount * (taxRate / 100);
+                          const total = netAmount + taxAmount; // Should equal inclusiveUnitPrice * quantity
+
                           return (
                             <tr key={item._id}>
                               <td className="border p-2 text-center">{idx + 1}</td>
@@ -951,10 +929,10 @@ export default function OrderTable() {
                                   <span>{item.product.title}</span>
                                 </div>
                               </td>
-                              <td className="border p-2 text-right">₹{displayedUnitPrice.toFixed(2)}</td>
-                              <td className="border p-2 text-center">{item.quantity}</td>
+                              <td className="border p-2 text-right">₹{netUnitPrice.toFixed(2)}</td>
+                              <td className="border p-2 text-center">{quantity}</td>
                               <td className="border p-2 text-right">₹{netAmount.toFixed(2)}</td>
-                              <td className="border p-2 text-center">18%</td>
+                              <td className="border p-2 text-center">{taxRate}%</td>
                               <td className="border p-2 text-center">IGST</td>
                               <td className="border p-2 text-right">₹{taxAmount.toFixed(2)}</td>
                               <td className="border p-2 text-right">₹{total.toFixed(2)}</td>
@@ -962,8 +940,8 @@ export default function OrderTable() {
                           );
                         })}
                         <tr className="bg-gray-50 font-bold">
-                          <td colSpan={8} className="border p-2 text-right">Grand Total</td>
-                          <td className="border p-2 text-right">₹{displayedGrandTotal.toFixed(2)}</td>
+                          <td colSpan={8} className="border p-2 text-right">Grand Total (inclusive of tax)</td>
+                          <td className="border p-2 text-right">₹{grandTotal.toFixed(2)}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -972,7 +950,7 @@ export default function OrderTable() {
                   {/* Amount in words */}
                   <div className="mb-2 text-base">
                     <span className="font-bold">Amount in Words: </span>
-                    {numberToWords(displayedGrandTotal)}
+                    {numberToWords(grandTotal)}
                   </div>
 
                   {/* Reverse charge line */}
@@ -1029,7 +1007,6 @@ export default function OrderTable() {
     </>
   );
 }
-
 
 
 
