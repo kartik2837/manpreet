@@ -7,10 +7,10 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
-import { colors } from "../../../data/Filter/color";
-import { price } from "../../../data/Filter/price";
-import { discount } from "../../../data/Filter/discount";
-import { brands } from "../../../data/Filter/brand";
+import { colors } from "../../../data/filter/color";
+import { price } from "../../../data/filter/price";
+import { discount } from "../../../data/filter/discount";
+import { brands } from "../../../data/filter/brand";
 import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 
