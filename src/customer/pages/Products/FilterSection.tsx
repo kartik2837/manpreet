@@ -243,9 +243,6 @@
 
 
 
-
-
-
 import {
   Button,
   Divider,
@@ -263,25 +260,10 @@ import { useSearchParams } from "react-router-dom";
 import { useState } from "react";
 
 /* ✅ TYPES FIX */
-type BrandType = {
-  name: string;
-  value: string;
-};
-
-type ColorType = {
-  name: string;
-  hex: string;
-};
-
-type PriceType = {
-  name: string;
-  value: string;
-};
-
-type DiscountType = {
-  name: string;
-  value: string;
-};
+type BrandType = { name: string; value: string };
+type ColorType = { name: string; hex: string };
+type PriceType = { name: string; value: string };
+type DiscountType = { name: string; value: number }; // ✅ number
 
 const FilterSection = () => {
   const [expendColor, setExpendColor] = useState(false);
@@ -332,29 +314,17 @@ const FilterSection = () => {
       <Divider />
 
       <div className="px-9 space-y-6">
-        {/* Brand Section */}
+        {/* Brand */}
         <section>
           <FormControl sx={{ zIndex: 0 }}>
-            <FormLabel
-              sx={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                pb: "14px",
-                color: "#ff864a",
-              }}
-              id="brand"
-            >
+            <FormLabel sx={{ fontSize: "16px", fontWeight: "bold", pb: "14px", color: "#ff864a" }}>
               Brand
             </FormLabel>
 
-            <RadioGroup
-              name="brand"
-              onChange={updateFilterParams}
-              defaultValue=""
-            >
+            <RadioGroup name="brand" onChange={updateFilterParams}>
               {(brands as BrandType[])
                 .slice(0, expendBrand ? brands.length : 5)
-                .map((item: BrandType) => (
+                .map((item) => (
                   <FormControlLabel
                     key={item.name}
                     value={item.value}
@@ -366,10 +336,7 @@ const FilterSection = () => {
           </FormControl>
 
           {brands.length > 5 && (
-            <button
-              onClick={handleExpendBrand}
-              className="text-orange-500 cursor-pointer"
-            >
+            <button onClick={handleExpendBrand} className="text-orange-500">
               {expendBrand ? "hide" : `+ ${brands.length - 5} more`}
             </button>
           )}
@@ -377,29 +344,17 @@ const FilterSection = () => {
 
         <Divider />
 
-        {/* Color Section */}
+        {/* Color */}
         <section>
           <FormControl sx={{ zIndex: 0 }}>
-            <FormLabel
-              sx={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                pb: "14px",
-                color: "#ff864a",
-              }}
-              id="color"
-            >
+            <FormLabel sx={{ fontSize: "16px", fontWeight: "bold", pb: "14px", color: "#ff864a" }}>
               Color
             </FormLabel>
 
-            <RadioGroup
-              name="color"
-              onChange={updateFilterParams}
-              defaultValue=""
-            >
+            <RadioGroup name="color" onChange={updateFilterParams}>
               {(colors as ColorType[])
                 .slice(0, expendColor ? colors.length : 5)
-                .map((item: ColorType) => (
+                .map((item) => (
                   <FormControlLabel
                     key={item.name}
                     value={item.name}
@@ -419,10 +374,7 @@ const FilterSection = () => {
           </FormControl>
 
           {colors.length > 5 && (
-            <button
-              onClick={handleExpendColor}
-              className="text-orange-500 cursor-pointer"
-            >
+            <button onClick={handleExpendColor} className="text-orange-500">
               {expendColor ? "hide" : `+ ${colors.length - 5} more`}
             </button>
           )}
@@ -430,27 +382,15 @@ const FilterSection = () => {
 
         <Divider />
 
-        {/* Price Section */}
+        {/* Price */}
         <section>
           <FormControl>
-            <FormLabel
-              sx={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                pb: "14px",
-                color: "#ff864a",
-              }}
-              id="price"
-            >
+            <FormLabel sx={{ fontSize: "16px", fontWeight: "bold", pb: "14px", color: "#ff864a" }}>
               Price
             </FormLabel>
 
-            <RadioGroup
-              name="price"
-              onChange={updateFilterParams}
-              defaultValue=""
-            >
-              {(price as PriceType[]).map((item: PriceType) => (
+            <RadioGroup name="price" onChange={updateFilterParams}>
+              {(price as PriceType[]).map((item) => (
                 <FormControlLabel
                   key={item.name}
                   value={item.value}
@@ -464,30 +404,18 @@ const FilterSection = () => {
 
         <Divider />
 
-        {/* Discount Section */}
+        {/* Discount */}
         <section>
           <FormControl>
-            <FormLabel
-              sx={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                pb: "14px",
-                color: "#ff864a",
-              }}
-              id="discount"
-            >
+            <FormLabel sx={{ fontSize: "16px", fontWeight: "bold", pb: "14px", color: "#ff864a" }}>
               Discount
             </FormLabel>
 
-            <RadioGroup
-              name="discount"
-              onChange={updateFilterParams}
-              defaultValue=""
-            >
-              {(discount as DiscountType[]).map((item: DiscountType) => (
+            <RadioGroup name="discount" onChange={updateFilterParams}>
+              {(discount as DiscountType[]).map((item) => (
                 <FormControlLabel
                   key={item.name}
-                  value={item.value}
+                  value={item.value.toString()}  // ✅ FIX
                   control={<Radio size="small" />}
                   label={item.name}
                 />
@@ -501,3 +429,5 @@ const FilterSection = () => {
 };
 
 export default FilterSection;
+
+
