@@ -16,7 +16,7 @@ import {
 import "tailwindcss/tailwind.css";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import CloseIcon from "@mui/icons-material/Close";
-import { colors } from "../../../data/Filter/color";
+import { colors } from "../../../data/filter/color";
 import { useAppDispatch, useAppSelector } from "../../../Redux Toolkit/Store";
 import { createProduct, updateProduct } from "../../../Redux Toolkit/Seller/sellerProductSlice";
 import { uploadToCloudinary } from "../../../util/uploadToCloudnary";
