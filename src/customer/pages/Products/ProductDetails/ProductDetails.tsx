@@ -156,7 +156,7 @@ const ProductDetails = () => {
                         >
                             <Box sx={{ ...style, maxWidth: "90%", maxHeight: "90%" }}>
                                 
-                                <ZoomableImage src={products.product?.images?.[selectedImage]} alt="" />
+                                 <ZoomableImage src={products.product?.images?.[selectedImage]} alt="" />
                             </Box>
                         </Modal>
                     </div>
