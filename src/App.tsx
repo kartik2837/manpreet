@@ -166,7 +166,7 @@ function App() {
       <div className='App'>
      
         {/* Loader / Scroll to top */}
-        <ScrollToTop centerLogo="/logos.png" brandLogo="/logo34.png" duration={4000} />
+        {/* <ScrollToTop centerLogo="/logos.png" brandLogo="/logo34.png" duration={4000} /> */}
 
         {/* Custom Right-click Alert */}
         {showAlert && (
