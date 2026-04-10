@@ -110,7 +110,7 @@ import BecomeSeller from './customer/pages/BecomeSeller/BecomeSeller';
 import AdminAuth from './admin/pages/Auth/AdminAuth';
 import { fetchUserProfile } from './Redux Toolkit/Customer/UserSlice';
 import { fetchHomePageData } from './Redux Toolkit/Customer/Customer/AsyncThunk';
-import ScrollToTop from './customer/components/TopScroll/ScrollToTop';
+// import ScrollToTop from './customer/components/TopScroll/ScrollToTop';
 
 
 
@@ -166,7 +166,7 @@ function App() {
       <div className='App'>
      
         {/* Loader / Scroll to top */}
-        {/* <ScrollToTop centerLogo="/logos.png" brandLogo="/logo34.png" duration={4000} /> */}
+        /* {/* <ScrollToTop centerLogo="/logos.png" brandLogo="/logo34.png" duration={4000} /> */} */
 
         {/* Custom Right-click Alert */}
         {showAlert && (
