@@ -97,7 +97,7 @@ import SearchProducts from '../customer/pages/Search/SearchProducts'
 import { useEffect } from 'react'
 import FooterContent from '../customer/components/Footer/FooterContent'
 import Contact from '../customer/components/Footer/Contact'
-import DesktopPopup from '../customer/popup/DesktopPopup'
+
 
 const CustomerRoutes = () => {
   const dispatch = useAppDispatch()
@@ -116,18 +116,7 @@ const CustomerRoutes = () => {
       <Navbar />
 
       {/* ✅ Popup only once logic handled in component */}
-      <DesktopPopup
-        initialImageUrl="https://cdn.vectorstock.com/i/1000v/19/10/cosmetics-beauty-products-for-make-up-sale-banner-vector-38391910.jpg"
-        allowedMobile="9992088843"
-        delay={10000}
-      />
-
-       <DesktopPopup
-  initialImageUrl="https://cdn.vectorstock.com/i/1000v/19/10/cosmetics-beauty-products-for-make-up-sale-banner-vector-38391910.jpg"
-  allowedMobile="9992088843" // sirf ye number se upload ho
-  delay={10000} // 10 sec
-  
-/>
+     
 
 
       <Routes>
