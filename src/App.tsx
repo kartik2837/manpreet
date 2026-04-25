@@ -110,10 +110,7 @@ import BecomeSeller from './customer/pages/BecomeSeller/BecomeSeller';
 import AdminAuth from './admin/pages/Auth/AdminAuth';
 import { fetchUserProfile } from './Redux Toolkit/Customer/UserSlice';
 import { fetchHomePageData } from './Redux Toolkit/Customer/Customer/AsyncThunk';
-
-
-
-
+import ScrollToTop from './customer/components/TopScroll/ScrollToTop';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -165,7 +162,7 @@ function App() {
     <ThemeProvider theme={customeTheme}>
       <div className='App'>
      
-        {/* Loader / Scroll to top */}
+       <ScrollToTop />
     
 
         {/* Custom Right-click Alert */}
