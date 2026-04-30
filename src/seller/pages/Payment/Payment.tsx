@@ -111,12 +111,6 @@
 
 
 
-
-
-
-
-
-
 import { Button, Card, Divider, CircularProgress, Snackbar, Alert, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import TransactionTable from './TransactionTable';
@@ -175,6 +169,12 @@ const Payment: React.FC = () => {
         <Card className='col-span-1 p-5 rounded-md space-y-4'>
           <h1 className='text-gray-600 font-medium'>Total Earnings</h1>
           <h1 className='font-bold text-xl pb-1'>₹{totalEarnings}</h1>
+          
+          {/* ✅ Display pending payout – fixes TS6133 */}
+          <div className='text-gray-600'>
+            Pending Payout: <strong>₹{pendingPayout}</strong>
+          </div>
+
           <Divider />
           <p className='text-gray-600 font-medium pt-1'>
             Last Payment: <strong>₹0</strong>
@@ -213,7 +213,7 @@ const Payment: React.FC = () => {
         <div>
           {payoutRequest.success && (
             <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-              Thank you! Your request has been recieved. Our Team is reviewing it and  will process it within 3-5 business days, Thank you for your patience.
+              Thank you! Your request has been recieved. Our Team is reviewing it and will process it within 3-5 business days, Thank you for your patience.
             </Alert>
           )}
           {payoutRequest.error && (
@@ -245,6 +245,9 @@ const Payment: React.FC = () => {
 };
 
 export default Payment;
+
+
+
 
 
 
