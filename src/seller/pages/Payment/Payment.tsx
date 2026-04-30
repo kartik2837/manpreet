@@ -1,110 +1,255 @@
-import { Button, Card, Divider, CircularProgress, Snackbar, Alert } from '@mui/material';
-import { useState } from 'react';
-import TransactionTable from './TransactionTable';
-import Payouts from './PayoutsTable';
-import { useAppSelector, useAppDispatch } from '../../../Redux Toolkit/Store';
-import { requestPayout } from '../../../Redux Toolkit/Seller/payoutRequestSlice';
+// import { Button, Card, Divider, CircularProgress, Snackbar, Alert } from '@mui/material';
+// import { useState } from 'react';
+// import TransactionTable from './TransactionTable';
+// import Payouts from './PayoutsTable';
+// import { useAppSelector, useAppDispatch } from '../../../Redux Toolkit/Store';
+// import { requestPayout } from '../../../Redux Toolkit/Seller/payoutRequestSlice';
 
-// Type for tabs
+// // Type for tabs
+// interface TabType {
+//     name: string;
+// }
+
+// const tabs: TabType[] = [
+//     { name: "Transaction" },
+//     // { name: "Payouts" } // you can enable if needed
+// ];
+
+// const Payment = () => {
+//     const [activeTab, setActiveTab] = useState<TabType["name"]>(tabs[0].name);
+//     const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+//     const dispatch = useAppDispatch();
+//     const { sellers, payoutRequest } = useAppSelector((store) => store);
+
+//     const handleActiveTab = (item: TabType) => {
+//         setActiveTab(item.name);
+//     };
+
+//     const handleRequestPayout = () => {
+//         const jwt = localStorage.getItem("jwt") || "";
+//         dispatch(requestPayout(jwt));
+//         setSnackbarOpen(true);
+//     };
+
+//     // Safely access pendingPayout and totalEarnings
+//     const pendingPayout: number = sellers.report?.pendingPayout ?? 0;
+//     const totalEarnings: number = sellers.report?.totalEarnings ?? 0;
+
+//     return (
+//         <div>
+//             {/* Earnings Card */}
+//             <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
+//                 <Card className='col-span-1 p-5 rounded-md space-y-4'>
+//                     <h1 className='text-gray-600 font-medium'>Total Earning</h1>
+//                     <h1 className='font-bold text-xl pb-1'>₹{totalEarnings}</h1>
+//                     <Divider />
+//                     <p className='text-gray-600 font-medium pt-1'>
+//                         Last Payment: <strong>₹0</strong>
+//                     </p>
+
+//                     {pendingPayout > 0 && (
+//                         <div className='pt-4'>
+//                             <Button
+//                                 variant='contained'
+//                                 color='primary'
+//                                 onClick={handleRequestPayout}
+//                                 disabled={payoutRequest.loading}
+//                             >
+//                                 {payoutRequest.loading ? <CircularProgress size={20} color="inherit" /> : "Request Payout"}
+//                             </Button>
+//                         </div>
+//                     )}
+//                 </Card>
+//             </div>
+
+//             {/* Snackbar for request feedback */}
+//             <Snackbar
+//                 open={snackbarOpen && (payoutRequest.success || !!payoutRequest.error)}
+//                 autoHideDuration={4000}
+//                 onClose={() => setSnackbarOpen(false)}
+//                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+//             >
+//                 <>
+//                     {payoutRequest.success && (
+//                         <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
+//                             Payout request submitted successfully!
+//                         </Alert>
+//                     )}
+//                     {payoutRequest.error && (
+//                         <Alert onClose={() => setSnackbarOpen(false)} severity="error" sx={{ width: '100%' }}>
+//                             {payoutRequest.error}
+//                         </Alert>
+//                     )}
+//                 </>
+//             </Snackbar>
+
+
+//             {/* Tabs Section */}
+//             <div className='mt-10'>
+//                 <div className='flex gap-4'>
+//                     {tabs.map((item) => (
+//                         <Button
+//                             key={item.name} // key is mandatory
+//                             onClick={() => handleActiveTab(item)}
+//                             variant={activeTab === item.name ? "contained" : "outlined"}
+//                         >
+//                             {item.name}
+//                         </Button>
+//                     ))}
+//                 </div>
+
+//                 <div className='mt-5'>
+//                     {activeTab === "Transaction" ? <TransactionTable /> : <Payouts />}
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
+
+// export default Payment;
+
+
+
+
+
+
+
+
+
+import { Button, Card, Divider, CircularProgress, Snackbar, Alert, TextField } from '@mui/material';
+import { useState, useEffect } from 'react';
+import TransactionTable from './TransactionTable';
+import PayoutsTable from './PayoutsTable';
+import { useAppSelector, useAppDispatch } from '../../../Redux Toolkit/Store';
+import { requestPayout, clearRequestState } from '../../../Redux Toolkit/Seller/payoutRequestSlice';
+import { fetchSellerPayouts } from '../../../Redux Toolkit/Seller/payoutSlice';
+
 interface TabType {
-    name: string;
+  name: string;
 }
 
-const tabs: TabType[] = [
-    { name: "Transaction" },
-    // { name: "Payouts" } // you can enable if needed
-];
+const tabs: TabType[] = [{ name: "Transaction" }, { name: "Payouts" }];
 
-const Payment = () => {
-    const [activeTab, setActiveTab] = useState<TabType["name"]>(tabs[0].name);
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
+const Payment: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<TabType["name"]>(tabs[0].name);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [amount, setAmount] = useState<number | ''>('');
 
-    const dispatch = useAppDispatch();
-    const { sellers, payoutRequest } = useAppSelector((store) => store);
+  const dispatch = useAppDispatch();
+  const { sellers, payoutRequest } = useAppSelector((store) => store);
 
-    const handleActiveTab = (item: TabType) => {
-        setActiveTab(item.name);
-    };
+  const handleActiveTab = (item: TabType) => {
+    setActiveTab(item.name);
+  };
 
-    const handleRequestPayout = () => {
-        const jwt = localStorage.getItem("jwt") || "";
-        dispatch(requestPayout(jwt));
-        setSnackbarOpen(true);
-    };
+  const handleRequestPayout = async () => {
+    if (!amount || amount <= 0) return;
+    const jwt = localStorage.getItem("jwt") || "";
+    await dispatch(requestPayout({ jwt, amount: Number(amount) }));
+    setSnackbarOpen(true);
+    if (activeTab === "Payouts") {
+      dispatch(fetchSellerPayouts(jwt));
+    }
+    setAmount('');
+  };
 
-    // Safely access pendingPayout and totalEarnings
-    const pendingPayout: number = sellers.report?.pendingPayout ?? 0;
-    const totalEarnings: number = sellers.report?.totalEarnings ?? 0;
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+    dispatch(clearRequestState());
+  };
 
-    return (
-        <div>
-            {/* Earnings Card */}
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
-                <Card className='col-span-1 p-5 rounded-md space-y-4'>
-                    <h1 className='text-gray-600 font-medium'>Total Earning</h1>
-                    <h1 className='font-bold text-xl pb-1'>₹{totalEarnings}</h1>
-                    <Divider />
-                    <p className='text-gray-600 font-medium pt-1'>
-                        Last Payment: <strong>₹0</strong>
-                    </p>
+  useEffect(() => {
+    if (activeTab === "Payouts") {
+      const jwt = localStorage.getItem("jwt");
+      if (jwt) dispatch(fetchSellerPayouts(jwt));
+    }
+  }, [activeTab, dispatch]);
 
-                    {pendingPayout > 0 && (
-                        <div className='pt-4'>
-                            <Button
-                                variant='contained'
-                                color='primary'
-                                onClick={handleRequestPayout}
-                                disabled={payoutRequest.loading}
-                            >
-                                {payoutRequest.loading ? <CircularProgress size={20} color="inherit" /> : "Request Payout"}
-                            </Button>
-                        </div>
-                    )}
-                </Card>
-            </div>
+  const totalEarnings = sellers.report?.totalEarnings ?? 0;
+  const pendingPayout = sellers.report?.pendingPayout ?? 0;
 
-            {/* Snackbar for request feedback */}
-            <Snackbar
-                open={snackbarOpen && (payoutRequest.success || !!payoutRequest.error)}
-                autoHideDuration={4000}
-                onClose={() => setSnackbarOpen(false)}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+  return (
+    <div>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
+        <Card className='col-span-1 p-5 rounded-md space-y-4'>
+          <h1 className='text-gray-600 font-medium'>Total Earnings</h1>
+          <h1 className='font-bold text-xl pb-1'>₹{totalEarnings}</h1>
+          <Divider />
+          <p className='text-gray-600 font-medium pt-1'>
+            Last Payment: <strong>₹0</strong>
+          </p>
+
+          <div className='pt-4 space-y-3'>
+            <TextField
+              label="Amount to withdraw (₹)"
+              type="number"
+              fullWidth
+              size="small"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+              disabled={payoutRequest.loading}
+              inputProps={{ min: 1 }}
+            />
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={handleRequestPayout}
+              disabled={payoutRequest.loading || !amount || amount <= 0}
+              fullWidth
             >
-                <>
-                    {payoutRequest.success && (
-                        <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
-                            Payout request submitted successfully!
-                        </Alert>
-                    )}
-                    {payoutRequest.error && (
-                        <Alert onClose={() => setSnackbarOpen(false)} severity="error" sx={{ width: '100%' }}>
-                            {payoutRequest.error}
-                        </Alert>
-                    )}
-                </>
-            </Snackbar>
+              {payoutRequest.loading ? <CircularProgress size={24} color="inherit" /> : "Request Payout"}
+            </Button>
+          </div>
+        </Card>
+      </div>
 
-
-            {/* Tabs Section */}
-            <div className='mt-10'>
-                <div className='flex gap-4'>
-                    {tabs.map((item) => (
-                        <Button
-                            key={item.name} // key is mandatory
-                            onClick={() => handleActiveTab(item)}
-                            variant={activeTab === item.name ? "contained" : "outlined"}
-                        >
-                            {item.name}
-                        </Button>
-                    ))}
-                </div>
-
-                <div className='mt-5'>
-                    {activeTab === "Transaction" ? <TransactionTable /> : <Payouts />}
-                </div>
-            </div>
+      <Snackbar
+        open={snackbarOpen && (payoutRequest.success || !!payoutRequest.error)}
+        autoHideDuration={4000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <div>
+          {payoutRequest.success && (
+            <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+              Thank you! Your request has been recieved. Our Team is reviewing it and  will process it within 3-5 business days, Thank you for your patience.
+            </Alert>
+          )}
+          {payoutRequest.error && (
+            <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+              {payoutRequest.error}
+            </Alert>
+          )}
         </div>
-    );
+      </Snackbar>
+
+      <div className='mt-10'>
+        <div className='flex gap-4'>
+          {tabs.map((item) => (
+            <Button
+              key={item.name}
+              onClick={() => handleActiveTab(item)}
+              variant={activeTab === item.name ? "contained" : "outlined"}
+            >
+              {item.name}
+            </Button>
+          ))}
+        </div>
+        <div className='mt-5'>
+          {activeTab === "Transaction" ? <TransactionTable /> : <PayoutsTable />}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Payment;
+
+
+
+
+
+
+
+
