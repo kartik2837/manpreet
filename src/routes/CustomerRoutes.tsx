@@ -136,6 +136,7 @@ const CustomerRoutes = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/:slug" element={<FooterContent />} />
         <Route path='*' element={<NotFound />} />
+              <Route path='/product/:productId' element={<ProductDetails />} />
       </Routes>
 
       <Footer />
