@@ -315,7 +315,6 @@ const Navbar = () => {
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
-  // Fixed: use ReturnType<typeof setTimeout> for browser compatibility
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const theme = useTheme();
@@ -326,7 +325,7 @@ const Navbar = () => {
   const { user, auth, cart, sellers, mainCategory } = useAppSelector((store) => store);
   const navigate = useNavigate();
 
-  // Fetch categories only if JWT exists
+  // Fetch categories
   useEffect(() => {
     if (auth.jwt) {
       dispatch(fetchMainCategories(auth.jwt));
@@ -356,7 +355,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Safe category list
   const levelOneCategories = mainCategory?.categories?.filter((cat) => cat.level === 1) || [];
 
   const toggleDrawer = (newOpen: boolean) => () => setOpenDrawer(newOpen);
@@ -366,7 +364,6 @@ const Navbar = () => {
     else navigate("/become-seller");
   };
 
-  // Search function
   const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
       setSearchedProducts([]);
@@ -388,7 +385,6 @@ const Navbar = () => {
     }
   }, [dispatch]);
 
-  // Debounced search
   useEffect(() => {
     if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     if (!searchQuery.trim()) {
@@ -429,12 +425,11 @@ const Navbar = () => {
     navigate(`/product/${productId}`);
   };
 
-  // Safe cart items count
   const cartItemsCount = cart?.cart?.cartItems?.length ?? 0;
 
   return (
     <Box sx={{ zIndex: 2 }} className="sticky top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm">
-      {/* ================= NAVBAR TOP ================= */}
+      {/* Top Bar */}
       <div className="flex items-center justify-between px-3 lg:px-20 h-[65px] lg:h-[70px] border-b border-gray-100">
         <div className="flex items-center gap-3 lg:gap-9">
           <div className="flex items-center gap-2">
@@ -453,7 +448,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2 lg:gap-6">
-          {/* Desktop search */}
+          {/* Desktop Search */}
           <div className="hidden md:block relative">
             <TextField
               inputRef={searchInputRef}
@@ -489,6 +484,7 @@ const Navbar = () => {
             />
           </div>
 
+          {/* Mobile Search Icon */}
           <div className="md:hidden">
             <IconButton onClick={() => setShowMobileSearch(true)}>
               <SearchIcon className="text-gray-700" sx={{ fontSize: isMobile ? 22 : 26 }} />
@@ -568,7 +564,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Category Bar - only render if categories exist */}
+      {/* Category Bar (Desktop only) */}
       {isLarge && levelOneCategories.length > 0 && (
         <div className="border-b border-gray-100">
           <ul
@@ -626,12 +622,12 @@ const Navbar = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                       {searchedProducts.map((product) => (
                         <div
-  key={product._id}
-  className="transform transition-all duration-200 hover:scale-105 cursor-pointer"
-  onClick={() => product._id && handleProductClick(product._id)}
->
-  <ProductCard item={product} />
-</div>
+                          key={product._id}
+                          className="transform transition-all duration-200 hover:scale-105 cursor-pointer"
+                          onClick={() => product._id && handleProductClick(product._id)}
+                        >
+                          <ProductCard item={product} />
+                        </div>
                       ))}
                     </div>
                   ) : (
@@ -653,26 +649,30 @@ const Navbar = () => {
         </div>
       </Fade>
 
+      {/* Drawer (mobile menu) – passes categories to DrawerList */}
       <Drawer open={openDrawer} onClose={toggleDrawer(false)}>
-        <DrawerList toggleDrawer={toggleDrawer} />
+        <DrawerList toggleDrawer={toggleDrawer} categories={levelOneCategories} />
       </Drawer>
 
+      {/* Category Sheet (Desktop hover) */}
       {showSheet && selectedCategory && (
         <div
           onMouseLeave={() => setShowSheet(false)}
           onMouseEnter={() => setShowSheet(true)}
-          className="categorySheet absolute top-[125px] left-20 right-20"
+          className="categorySheet absolute top-[125px] left-20 right-20 z-10"
         >
           <CategorySheet setShowSheet={setShowSheet} selectedCategory={selectedCategory} />
         </div>
       )}
 
+      {/* Reward Drawer (Right side) */}
       <Drawer anchor="right" open={rewardOpen} onClose={() => setRewardOpen(false)}>
         <Box sx={{ width: { xs: 300, sm: 400 }, padding: 3 }}>
           <Reward />
         </Box>
       </Drawer>
 
+      {/* Mobile Search Modal */}
       {showMobileSearch && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-16 px-4">
           <Paper elevation={6} className="w-full max-w-md p-4 rounded-2xl">
@@ -719,8 +719,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
 
 
 
