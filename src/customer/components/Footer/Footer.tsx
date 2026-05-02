@@ -407,18 +407,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -497,10 +485,10 @@ const Footer = () => {
 
   // Social links
   const socialLinks = [
-    { label: "Facebook", url: "https://facebook.com/selfysnap", icon: FaFacebook },
-    { label: "Instagram", url: "https://instagram.com/selfysnap", icon: FaInstagram },
-    { label: "Twitter", url: "https://twitter.com/selfysnap", icon: FaTwitter },
-    { label: "YouTube", url: "https://youtube.com/selfysnap", icon: FaYoutube },
+    { label: "Facebook", url: "https://www.facebook.com/share/1CynTqYXxd/?mibextid=wwXIfr", icon: FaFacebook },
+    { label: "Instagram", url: "https://www.instagram.com/selfysnapcom?igsh=MWFnaXBseGh5a2FleA%3D%3D&utm_source=qr", icon: FaInstagram },
+    { label: "Twitter", url: "#", icon: FaTwitter },
+    { label: "YouTube", url: "https://youtube.com/@selfysnap?si=QMoHmaQaIDiiI2XO", icon: FaYoutube },
   ];
 
   // Payment methods
@@ -571,6 +559,34 @@ const Footer = () => {
             </div>
           );
         })}
+
+
+
+         <div className="break-words">
+          <h4 className="text-white font-bold text-lg mb-4 flex items-center border-l-4 border-blue-500 pl-2 transition-all duration-200 hover:tracking-wide">
+            <FaEnvelope className="inline mr-2 text-blue-400" /> Mail Us:
+          </h4>
+          <Link
+            to="/contact"
+            className="inline-block transition-all duration-200 hover:text-blue-400 hover:font-bold hover:translate-x-1 hover:drop-shadow-[0_2px_2px_rgba(59,130,246,0.3)] mb-3"
+          >
+            Contact
+          </Link>
+          <div className="text-sm leading-relaxed">
+            <p className="flex items-start gap-2 transition-all duration-200 hover:text-blue-300 hover:translate-x-1">
+              <FaMapMarkerAlt className="mt-1 flex-shrink-0 text-blue-400" />
+              <span>
+                {footer.address.company}
+                <br />
+                {footer.address.line1}
+                <br />
+                {footer.address.line2}
+                <br />
+                {footer.address.country}
+              </span>
+            </p>
+          </div>
+        </div>
 
         {/* Logo & Social Media */}
         <div className="flex flex-col space-y-6">
@@ -647,31 +663,7 @@ const Footer = () => {
         </div>
 
         {/* Mail Us / Address */}
-        <div className="break-words">
-          <h4 className="text-white font-bold text-lg mb-4 flex items-center border-l-4 border-blue-500 pl-2 transition-all duration-200 hover:tracking-wide">
-            <FaEnvelope className="inline mr-2 text-blue-400" /> Mail Us:
-          </h4>
-          <Link
-            to="/contact"
-            className="inline-block transition-all duration-200 hover:text-blue-400 hover:font-bold hover:translate-x-1 hover:drop-shadow-[0_2px_2px_rgba(59,130,246,0.3)] mb-3"
-          >
-            Contact
-          </Link>
-          <div className="text-sm leading-relaxed">
-            <p className="flex items-start gap-2 transition-all duration-200 hover:text-blue-300 hover:translate-x-1">
-              <FaMapMarkerAlt className="mt-1 flex-shrink-0 text-blue-400" />
-              <span>
-                {footer.address.company}
-                <br />
-                {footer.address.line1}
-                <br />
-                {footer.address.line2}
-                <br />
-                {footer.address.country}
-              </span>
-            </p>
-          </div>
-        </div>
+       
       </div>
 
       <div className="border-t border-gray-800" />
@@ -714,3 +706,16 @@ const Footer = () => {
 };
 
 export default Footer;
+
+
+
+
+
+
+
+
+
+
+
+
+
