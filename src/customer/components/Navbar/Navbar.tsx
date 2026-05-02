@@ -265,9 +265,6 @@
 
 
 
-
-
-
 import {
   Avatar,
   Badge,
@@ -722,10 +719,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-
-
 
 
 
