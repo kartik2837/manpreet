@@ -111,6 +111,8 @@
 
 
 
+
+
 import { Button, Card, Divider, CircularProgress, Snackbar, Alert, TextField } from '@mui/material';
 import { useState, useEffect } from 'react';
 import TransactionTable from './TransactionTable';
@@ -125,31 +127,78 @@ interface TabType {
 
 const tabs: TabType[] = [{ name: "Transaction" }, { name: "Payouts" }];
 
+// ✅ localStorage key
+const STORAGE_KEY = "seller_available_balance";
+
 const Payment: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType["name"]>(tabs[0].name);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [amount, setAmount] = useState<number | ''>('');
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  // ✅ local earnings (persistent)
+  const [localEarnings, setLocalEarnings] = useState<number>(0);
 
   const dispatch = useAppDispatch();
   const { sellers, payoutRequest } = useAppSelector((store) => store);
+
+  const totalEarnings = sellers.report?.totalEarnings ?? 0;
+
+  // ✅ Load from localStorage first
+  useEffect(() => {
+    const savedBalance = localStorage.getItem(STORAGE_KEY);
+
+    if (savedBalance !== null) {
+      setLocalEarnings(Number(savedBalance));
+    } else {
+      setLocalEarnings(totalEarnings);
+    }
+  }, [totalEarnings]);
 
   const handleActiveTab = (item: TabType) => {
     setActiveTab(item.name);
   };
 
   const handleRequestPayout = async () => {
-    if (!amount || amount <= 0) return;
-    const jwt = localStorage.getItem("jwt") || "";
-    await dispatch(requestPayout({ jwt, amount: Number(amount) }));
-    setSnackbarOpen(true);
-    if (activeTab === "Payouts") {
-      dispatch(fetchSellerPayouts(jwt));
+    setValidationError(null);
+
+    if (!amount || amount <= 0) {
+      setValidationError("Please enter a valid amount.");
+      return;
     }
+
+    if (amount > localEarnings) {
+      setValidationError(`Requested amount exceeds total earnings (₹${localEarnings}).`);
+      return;
+    }
+
+    const jwt = localStorage.getItem("jwt") || "";
+
+    // ✅ optimistic update
+    const updatedBalance = localEarnings - Number(amount);
+    setLocalEarnings(updatedBalance);
+    localStorage.setItem(STORAGE_KEY, String(updatedBalance));
+
+    const result = await dispatch(requestPayout({ jwt, amount: Number(amount) }));
+
+    setSnackbarOpen(true);
     setAmount('');
+
+    if (requestPayout.fulfilled.match(result)) {
+      if (activeTab === "Payouts") {
+        dispatch(fetchSellerPayouts(jwt));
+      }
+    } else {
+      // ❌ rollback
+      const rollbackBalance = updatedBalance + Number(amount);
+      setLocalEarnings(rollbackBalance);
+      localStorage.setItem(STORAGE_KEY, String(rollbackBalance));
+    }
   };
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+    setValidationError(null);
     dispatch(clearRequestState());
   };
 
@@ -160,22 +209,25 @@ const Payment: React.FC = () => {
     }
   }, [activeTab, dispatch]);
 
-  const totalEarnings = sellers.report?.totalEarnings ?? 0;
-  const pendingPayout = sellers.report?.pendingPayout ?? 0;
+  const isRequestDisabled = () => {
+    if (payoutRequest.loading) return true;
+    if (localEarnings <= 0) return true;
+    if (!amount || amount <= 0) return true;
+    if (Number(amount) > localEarnings) return true;
+    return false;
+  };
 
   return (
     <div>
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
         <Card className='col-span-1 p-5 rounded-md space-y-4'>
           <h1 className='text-gray-600 font-medium'>Total Earnings</h1>
-          <h1 className='font-bold text-xl pb-1'>₹{totalEarnings}</h1>
-          
-          {/* ✅ Display pending payout – fixes TS6133 */}
-          <div className='text-gray-600'>
-            Pending Payout: <strong>₹{pendingPayout}</strong>
-          </div>
+
+          {/* ✅ UPDATED */}
+          <h1 className='font-bold text-xl pb-1'>₹{localEarnings}</h1>
 
           <Divider />
+
           <p className='text-gray-600 font-medium pt-1'>
             Last Payment: <strong>₹0</strong>
           </p>
@@ -187,19 +239,35 @@ const Payment: React.FC = () => {
               fullWidth
               size="small"
               value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
+              onChange={(e) => {
+                setAmount(e.target.value === '' ? '' : Number(e.target.value));
+                setValidationError(null);
+              }}
               disabled={payoutRequest.loading}
               inputProps={{ min: 1 }}
+              error={!!validationError}
+              helperText={validationError}
             />
+
             <Button
               variant='contained'
               color='primary'
               onClick={handleRequestPayout}
-              disabled={payoutRequest.loading || !amount || amount <= 0}
+              disabled={isRequestDisabled()}
               fullWidth
             >
-              {payoutRequest.loading ? <CircularProgress size={24} color="inherit" /> : "Request Payout"}
+              {payoutRequest.loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Request Payout"
+              )}
             </Button>
+
+            {localEarnings <= 0 && (
+              <Alert severity="info" sx={{ mt: 1 }}>
+                You have no earnings available.
+              </Alert>
+            )}
           </div>
         </Card>
       </div>
@@ -213,7 +281,7 @@ const Payment: React.FC = () => {
         <div>
           {payoutRequest.success && (
             <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-              Thank you! Your request has been recieved. Our Team is reviewing it and will process it within 3-5 business days, Thank you for your patience.
+              Thank you! Your request has been received. Our team is reviewing it and will process it within 3-5 business days. 
             </Alert>
           )}
           {payoutRequest.error && (
@@ -236,6 +304,7 @@ const Payment: React.FC = () => {
             </Button>
           ))}
         </div>
+
         <div className='mt-5'>
           {activeTab === "Transaction" ? <TransactionTable /> : <PayoutsTable />}
         </div>
@@ -245,14 +314,6 @@ const Payment: React.FC = () => {
 };
 
 export default Payment;
-
-
-
-
-
-
-
-
 
 
 
