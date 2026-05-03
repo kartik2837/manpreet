@@ -21,7 +21,6 @@ import SearchProducts from '../customer/pages/Search/SearchProducts'
 import { useEffect } from 'react'
 import FooterContent from '../customer/components/Footer/FooterContent'
 import Contact from '../customer/components/Footer/Contact'
-import DesktopPopup from '../customer/popup/DesktopPopup'
 
 
 
@@ -36,12 +35,7 @@ const CustomerRoutes = () => {
   return (
     <>
       <Navbar />
-       <DesktopPopup
-  initialImageUrl="https://cdn.vectorstock.com/i/1000v/19/10/cosmetics-beauty-products-for-make-up-sale-banner-vector-38391910.jpg"
-  allowedMobile="9992088843" // sirf ye number se upload ho
-  delay={10000} // 10 sec
-
-/>
+     
       <Routes>
         <Route path='/' element={<Home />} />
         {/* <Route path='/chat-bot' element={<ChatBot />} /> */}
