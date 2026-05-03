@@ -264,7 +264,6 @@
 
 
 
-
 import {
   Avatar,
   Badge,
@@ -301,7 +300,6 @@ import { searchProduct } from "../../../Redux Toolkit/Customer/ProductSlice";
 import ProductCard from "../../pages/Products/ProductCard/ProductCard";
 import type { Product } from "../../../types/productTypes";
 
-// Fallback categories (used if API returns no data)
 const FALLBACK_CATEGORIES = [
   { categoryId: "men", name: "Men", level: 1 },
   { categoryId: "women", name: "Women", level: 1 },
@@ -335,19 +333,16 @@ const Navbar = () => {
   const { user, auth, cart, sellers, mainCategory } = useAppSelector((store) => store);
   const navigate = useNavigate();
 
-  // Fetch dynamic categories
   useEffect(() => {
     dispatch(fetchMainCategories(auth.jwt || ""));
   }, [auth.jwt, dispatch]);
 
-  // Hide category bar on scroll
   useEffect(() => {
     const handleScroll = () => setHideCategory(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close search results on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -363,7 +358,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Get level 1 categories from Redux (with fallback)
   const realCategories = mainCategory?.categories?.filter((cat: any) => cat.level === 1) || [];
   const levelOneCategories = realCategories.length > 0 ? realCategories : FALLBACK_CATEGORIES;
 
@@ -374,7 +368,6 @@ const Navbar = () => {
     else navigate("/become-seller");
   };
 
-  // Search logic (unchanged)
   const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
       setSearchedProducts([]);
@@ -479,18 +472,8 @@ const Navbar = () => {
                 },
               }}
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon className="text-gray-400" />
-                  </InputAdornment>
-                ),
-                endAdornment: searchQuery ? (
-                  <InputAdornment position="end">
-                    <IconButton size="small" onClick={handleClearInput} edge="end">
-                      <ClearIcon fontSize="small" />
-                    </IconButton>
-                  </InputAdornment>
-                ) : null,
+                startAdornment: <InputAdornment position="start"><SearchIcon className="text-gray-400" /></InputAdornment>,
+                endAdornment: searchQuery ? <InputAdornment position="end"><IconButton size="small" onClick={handleClearInput} edge="end"><ClearIcon fontSize="small" /></IconButton></InputAdornment> : null,
               }}
             />
           </div>
@@ -502,7 +485,6 @@ const Navbar = () => {
             </IconButton>
           </div>
 
-          {/* Reward referral */}
           <Tooltip title="Referral Rewards">
             <IconButton onClick={() => setRewardOpen(true)} color="primary">
               <Share sx={{ fontSize: isMobile ? 22 : 26 }} />
@@ -511,25 +493,14 @@ const Navbar = () => {
 
           {user?.user ? (
             <Button onClick={() => navigate("/account/orders")} className="flex items-center gap-2 min-w-0 px-1 sm:px-2">
-              <Avatar
-                sx={{ width: isMobile ? 24 : 29, height: isMobile ? 24 : 29 }}
-                src="https://img.icons8.com/ios7/1200/user-male-circle--v2.jpg"
-              />
+              <Avatar sx={{ width: isMobile ? 24 : 29, height: isMobile ? 24 : 29 }} src="https://img.icons8.com/ios7/1200/user-male-circle--v2.jpg" />
               {!isMobile && <h1 className="font-semibold hidden lg:block">{user.user?.fullName?.split(" ")[0]}</h1>}
             </Button>
           ) : (
             <Button
               variant="contained"
               size={isMobile ? "small" : "medium"}
-              sx={{
-                minWidth: "auto",
-                px: isMobile ? 1 : 2,
-                fontSize: isMobile ? "12px" : "14px",
-                borderRadius: "40px",
-                textTransform: "none",
-                boxShadow: "none",
-                "&:hover": { boxShadow: "none" },
-              }}
+              sx={{ minWidth: "auto", px: isMobile ? 1 : 2, fontSize: isMobile ? "12px" : "14px", borderRadius: "40px", textTransform: "none", boxShadow: "none", "&:hover": { boxShadow: "none" } }}
               startIcon={!isMobile && <AccountCircleIcon sx={{ fontSize: "16px" }} />}
               onClick={() => navigate("/login")}
             >
@@ -542,48 +513,23 @@ const Navbar = () => {
           </IconButton>
 
           <IconButton size={isMobile ? "small" : "medium"} onClick={() => navigate("/cart")}>
-            <Badge
-              badgeContent={cartItemsCount}
-              color="primary"
-              sx={{
-                "& .MuiBadge-badge": {
-                  fontSize: isMobile ? "10px" : "12px",
-                  minWidth: isMobile ? "16px" : "20px",
-                  height: isMobile ? "16px" : "20px",
-                  borderRadius: "50%",
-                },
-              }}
-            >
+            <Badge badgeContent={cartItemsCount} color="primary" sx={{ "& .MuiBadge-badge": { fontSize: isMobile ? "10px" : "12px", minWidth: isMobile ? "16px" : "20px", height: isMobile ? "16px" : "20px", borderRadius: "50%" } }}>
               <AddShoppingCartIcon sx={{ fontSize: isMobile ? 22 : 29 }} className="text-gray-700" />
             </Badge>
           </IconButton>
 
           {isLarge && (
-            <Button
-              onClick={becomeSellerClick}
-              startIcon={<StorefrontIcon />}
-              variant="outlined"
-              sx={{
-                borderRadius: "40px",
-                textTransform: "none",
-                borderColor: "#e2e8f0",
-                "&:hover": { borderColor: "#3b82f6", backgroundColor: "#eff6ff" },
-              }}
-            >
+            <Button onClick={becomeSellerClick} startIcon={<StorefrontIcon />} variant="outlined" sx={{ borderRadius: "40px", textTransform: "none", borderColor: "#e2e8f0", "&:hover": { borderColor: "#3b82f6", backgroundColor: "#eff6ff" } }}>
               Become Seller
             </Button>
           )}
         </div>
       </div>
 
-      {/* ================= CATEGORY BAR – ALWAYS VISIBLE (DESKTOP + MOBILE) ================= */}
-      {levelOneCategories.length > 0 && (
-        <div
-          className={`border-b border-gray-100 overflow-x-auto scrollbar-hide transition-all duration-300 ease-in-out ${
-            hideCategory ? "hidden" : "block"
-          }`}
-        >
-          <ul className="flex items-center gap-4 md:gap-8 px-3 lg:px-20 py-2 font-medium text-gray-700 whitespace-nowrap">
+      {/* ================= CATEGORY BAR – DESKTOP ONLY ================= */}
+      {isLarge && levelOneCategories.length > 0 && (
+        <div className={`border-b border-gray-100 transition-all duration-300 ease-in-out ${hideCategory ? "hidden" : "block"}`}>
+          <ul className="flex items-center gap-8 px-20 py-2 font-medium text-gray-700 whitespace-nowrap overflow-x-auto scrollbar-hide">
             {levelOneCategories.map((item) => (
               <li
                 key={item.categoryId}
@@ -601,27 +547,15 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Search Results Panel */}
+      {/* Search Results Panel (unchanged) */}
       <Fade in={showResults} timeout={200}>
-        <div
-          ref={resultsRef}
-          className="absolute left-0 right-0 bg-white shadow-2xl z-50 border-t border-gray-100"
-          style={{ top: isLarge ? (hideCategory ? 70 : 125) : 65 }}
-        >
+        <div ref={resultsRef} className="absolute left-0 right-0 bg-white shadow-2xl z-50 border-t border-gray-100" style={{ top: isLarge ? (hideCategory ? 70 : 125) : 65 }}>
           <Paper elevation={0} className="rounded-none max-h-[70vh] overflow-y-auto">
             <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 p-4 flex justify-between items-center">
               <h2 className="text-lg font-semibold text-gray-800">
-                {searchLoading ? (
-                  <span className="flex items-center gap-2">
-                    <CircularProgress size={20} /> Searching...
-                  </span>
-                ) : (
-                  `Results for "${searchQuery}" (${searchedProducts.length})`
-                )}
+                {searchLoading ? <span className="flex items-center gap-2"><CircularProgress size={20} /> Searching...</span> : `Results for "${searchQuery}" (${searchedProducts.length})`}
               </h2>
-              <IconButton onClick={handleClearResults} size="small">
-                <CloseIcon />
-              </IconButton>
+              <IconButton onClick={handleClearResults} size="small"><CloseIcon /></IconButton>
             </div>
             <div className="p-6">
               {!searchLoading && (
@@ -629,11 +563,7 @@ const Navbar = () => {
                   {searchedProducts.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                       {searchedProducts.map((product) => (
-                        <div
-                          key={product._id}
-                          className="transform transition-all duration-200 hover:scale-105 cursor-pointer"
-                          onClick={() => product._id && handleProductClick(product._id)}
-                        >
+                        <div key={product._id} className="transform transition-all duration-200 hover:scale-105 cursor-pointer" onClick={() => product._id && handleProductClick(product._id)}>
                           <ProductCard item={product} />
                         </div>
                       ))}
@@ -647,74 +577,38 @@ const Navbar = () => {
                   )}
                 </>
               )}
-              {searchLoading && (
-                <div className="flex justify-center py-16">
-                  <CircularProgress />
-                </div>
-              )}
+              {searchLoading && <div className="flex justify-center py-16"><CircularProgress /></div>}
             </div>
           </Paper>
         </div>
       </Fade>
 
+      {/* DRAWER (hamburger menu) – categories appear here on all screens */}
       <Drawer open={openDrawer} onClose={toggleDrawer(false)}>
         <DrawerList toggleDrawer={toggleDrawer} categories={levelOneCategories} />
       </Drawer>
 
       {showSheet && selectedCategory && (
-        <div
-          onMouseLeave={() => setShowSheet(false)}
-          onMouseEnter={() => setShowSheet(true)}
-          className="categorySheet absolute top-[125px] left-20 right-20 z-10"
-        >
+        <div onMouseLeave={() => setShowSheet(false)} onMouseEnter={() => setShowSheet(true)} className="categorySheet absolute top-[125px] left-20 right-20 z-10">
           <CategorySheet setShowSheet={setShowSheet} selectedCategory={selectedCategory} />
         </div>
       )}
 
       <Drawer anchor="right" open={rewardOpen} onClose={() => setRewardOpen(false)}>
-        <Box sx={{ width: { xs: 300, sm: 400 }, padding: 3 }}>
-          <Reward />
-        </Box>
+        <Box sx={{ width: { xs: 300, sm: 400 }, padding: 3 }}><Reward /></Box>
       </Drawer>
 
       {showMobileSearch && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-16 px-4">
           <Paper elevation={6} className="w-full max-w-md p-4 rounded-2xl">
             <div className="flex items-center gap-2">
-              <TextField
-                autoFocus
-                fullWidth
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Search products..."
-                variant="outlined"
-                size="small"
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: "40px" } }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon className="text-gray-400" />
-                    </InputAdornment>
-                  ),
-                  endAdornment: searchQuery ? (
-                    <InputAdornment position="end">
-                      <IconButton size="small" onClick={handleClearInput}>
-                        <ClearIcon fontSize="small" />
-                      </IconButton>
-                    </InputAdornment>
-                  ) : null,
-                }}
-              />
-              <IconButton onClick={() => setShowMobileSearch(false)}>
-                <CloseIcon />
-              </IconButton>
+              <TextField autoFocus fullWidth value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyDown={handleKeyDown} placeholder="Search products..." variant="outlined" size="small" sx={{ "& .MuiOutlinedInput-root": { borderRadius: "40px" } }} InputProps={{
+                startAdornment: <InputAdornment position="start"><SearchIcon className="text-gray-400" /></InputAdornment>,
+                endAdornment: searchQuery ? <InputAdornment position="end"><IconButton size="small" onClick={handleClearInput}><ClearIcon fontSize="small" /></IconButton></InputAdornment> : null,
+              }} />
+              <IconButton onClick={() => setShowMobileSearch(false)}><CloseIcon /></IconButton>
             </div>
-            {searchLoading && (
-              <div className="flex justify-center mt-4">
-                <CircularProgress size={28} />
-              </div>
-            )}
+            {searchLoading && <div className="flex justify-center mt-4"><CircularProgress size={28} /></div>}
           </Paper>
         </div>
       )}
@@ -723,6 +617,9 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+
 
 
 
