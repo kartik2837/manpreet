@@ -54,6 +54,7 @@ const CustomerRoutes = () => {
         <Route path="/:slug" element={<FooterContent />} />
         <Route path='*' element={<NotFound />} />
         <Route path='/contact' element={<Contact/>}/>
+         <Route path='/product/:productId' element={<ProductDetails />} />
         
       </Routes>
       <Footer />
