@@ -57,9 +57,6 @@
 
 
 
-
-
-
 import { Box, Divider, List, ListItem, ListItemButton, ListItemText, IconButton } from "@mui/material";
 import { useState } from "react";
 import CategorySheet from "./CategorySheet";
@@ -130,3 +127,9 @@ const DrawerList = ({ toggleDrawer, categories = [] }: DrawerListProps) => {
 };
 
 export default DrawerList;
+
+
+
+
+
+
