@@ -301,6 +301,16 @@ import { searchProduct } from "../../../Redux Toolkit/Customer/ProductSlice";
 import ProductCard from "../../pages/Products/ProductCard/ProductCard";
 import type { Product } from "../../../types/productTypes";
 
+// Fallback categories (used if API returns no data)
+const FALLBACK_CATEGORIES = [
+  { categoryId: "men", name: "Men", level: 1 },
+  { categoryId: "women", name: "Women", level: 1 },
+  { categoryId: "kids", name: "Kids", level: 1 },
+  { categoryId: "electronics", name: "Electronics", level: 1 },
+  { categoryId: "fashion", name: "Fashion", level: 1 },
+  { categoryId: "home", name: "Home & Living", level: 1 },
+];
+
 const Navbar = () => {
   const [showSheet, setShowSheet] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("men");
@@ -325,21 +335,19 @@ const Navbar = () => {
   const { user, auth, cart, sellers, mainCategory } = useAppSelector((store) => store);
   const navigate = useNavigate();
 
-  // Fetch categories
+  // Fetch dynamic categories
   useEffect(() => {
-    if (auth.jwt) {
-      dispatch(fetchMainCategories(auth.jwt));
-    }
+    dispatch(fetchMainCategories(auth.jwt || ""));
   }, [auth.jwt, dispatch]);
 
-  // Scroll logic for hiding category bar
+  // Hide category bar on scroll
   useEffect(() => {
     const handleScroll = () => setHideCategory(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close search results when clicking outside
+  // Close search results on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -355,7 +363,9 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const levelOneCategories = mainCategory?.categories?.filter((cat) => cat.level === 1) || [];
+  // Get level 1 categories from Redux (with fallback)
+  const realCategories = mainCategory?.categories?.filter((cat: any) => cat.level === 1) || [];
+  const levelOneCategories = realCategories.length > 0 ? realCategories : FALLBACK_CATEGORIES;
 
   const toggleDrawer = (newOpen: boolean) => () => setOpenDrawer(newOpen);
 
@@ -364,6 +374,7 @@ const Navbar = () => {
     else navigate("/become-seller");
   };
 
+  // Search logic (unchanged)
   const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
       setSearchedProducts([]);
@@ -429,7 +440,7 @@ const Navbar = () => {
 
   return (
     <Box sx={{ zIndex: 2 }} className="sticky top-0 left-0 right-0 bg-white/80 backdrop-blur-md shadow-sm">
-      {/* Top Bar */}
+      {/* TOP BAR (logo, search, icons) */}
       <div className="flex items-center justify-between px-3 lg:px-20 h-[65px] lg:h-[70px] border-b border-gray-100">
         <div className="flex items-center gap-3 lg:gap-9">
           <div className="flex items-center gap-2">
@@ -448,7 +459,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-1 sm:gap-2 lg:gap-6">
-          {/* Desktop Search */}
+          {/* Desktop search */}
           <div className="hidden md:block relative">
             <TextField
               inputRef={searchInputRef}
@@ -484,13 +495,14 @@ const Navbar = () => {
             />
           </div>
 
-          {/* Mobile Search Icon */}
+          {/* Mobile search icon */}
           <div className="md:hidden">
             <IconButton onClick={() => setShowMobileSearch(true)}>
               <SearchIcon className="text-gray-700" sx={{ fontSize: isMobile ? 22 : 26 }} />
             </IconButton>
           </div>
 
+          {/* Reward referral */}
           <Tooltip title="Referral Rewards">
             <IconButton onClick={() => setRewardOpen(true)} color="primary">
               <Share sx={{ fontSize: isMobile ? 22 : 26 }} />
@@ -564,18 +576,14 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Category Bar (Desktop only) */}
-      {isLarge && levelOneCategories.length > 0 && (
-        <div className="border-b border-gray-100">
-          <ul
-            className="flex items-center gap-8 px-20 font-medium text-gray-700 overflow-x-auto scrollbar-hide transition-all duration-300 ease-in-out"
-            style={{
-              height: hideCategory ? 0 : 55,
-              opacity: hideCategory ? 0 : 1,
-              transform: hideCategory ? "translateY(-100%)" : "translateY(0%)",
-              visibility: hideCategory ? "hidden" : "visible",
-            }}
-          >
+      {/* ================= CATEGORY BAR – ALWAYS VISIBLE (DESKTOP + MOBILE) ================= */}
+      {levelOneCategories.length > 0 && (
+        <div
+          className={`border-b border-gray-100 overflow-x-auto scrollbar-hide transition-all duration-300 ease-in-out ${
+            hideCategory ? "hidden" : "block"
+          }`}
+        >
+          <ul className="flex items-center gap-4 md:gap-8 px-3 lg:px-20 py-2 font-medium text-gray-700 whitespace-nowrap">
             {levelOneCategories.map((item) => (
               <li
                 key={item.categoryId}
@@ -584,7 +592,7 @@ const Navbar = () => {
                   setSelectedCategory(item.categoryId);
                   setShowSheet(true);
                 }}
-                className="whitespace-nowrap hover:text-blue-600 cursor-pointer hover:border-b-2 border-blue-600 flex items-center h-full transition-all duration-200"
+                className="cursor-pointer hover:text-blue-600 hover:border-b-2 border-blue-600 transition-all duration-200"
               >
                 {item.name}
               </li>
@@ -649,12 +657,10 @@ const Navbar = () => {
         </div>
       </Fade>
 
-      {/* Drawer (mobile menu) – passes categories to DrawerList */}
       <Drawer open={openDrawer} onClose={toggleDrawer(false)}>
         <DrawerList toggleDrawer={toggleDrawer} categories={levelOneCategories} />
       </Drawer>
 
-      {/* Category Sheet (Desktop hover) */}
       {showSheet && selectedCategory && (
         <div
           onMouseLeave={() => setShowSheet(false)}
@@ -665,14 +671,12 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Reward Drawer (Right side) */}
       <Drawer anchor="right" open={rewardOpen} onClose={() => setRewardOpen(false)}>
         <Box sx={{ width: { xs: 300, sm: 400 }, padding: 3 }}>
           <Reward />
         </Box>
       </Drawer>
 
-      {/* Mobile Search Modal */}
       {showMobileSearch && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-16 px-4">
           <Paper elevation={6} className="w-full max-w-md p-4 rounded-2xl">
@@ -719,7 +723,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
 
 
 
